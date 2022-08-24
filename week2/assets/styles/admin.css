@@ -100,7 +100,7 @@
 }
 
 .dashboard {
-    height: 100vh;
+    height: 100%;
     background-color: #f5f5f5;
     padding: 70px 100px 70px 80px;
 }
@@ -421,7 +421,7 @@
     }
 
     .dashboard {
-        padding: 50px 20px 0 20px;
+        padding: 50px 20px 30px 20px;
     }
 
     .main-bottom {
