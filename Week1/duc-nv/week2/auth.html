@@ -1,0 +1,45 @@
+b<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/styles/base.css">
+    <link rel="stylesheet" href="/assets/styles/auth.css">
+    <title>Auth</title>
+</head>
+<body>
+    <div class="auth">
+        <div class="container">
+            <div class="form-form">
+                <div class="form-header">
+                    <p>SOIOT SYSTEM</p>
+                </div>
+                <div class="login-form">
+                    <div class="form-item">
+                        <input type="text" placeholder="Username" onblur="isRequired(this)" name="name" id="username">
+                        <div class="message message-username">
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <input type="password" placeholder="Password" onblur="isRequired(this)" name="password" id="password">
+                        <div class="message message-password">
+                        </div>
+                    </div>
+                </div>
+                <div class="message form-message">
+                </div>
+                <div class="form-bottom">
+                    <button class="button-submit" onclick="Validator()">
+                        LOGIN
+                    </button>
+                    <div class="other">
+                        or create new account
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/auth.js"></script>
+</body>
+</html>

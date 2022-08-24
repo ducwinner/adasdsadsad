@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/styles/base.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/font-awesome.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="/assets/styles/admin.css">
+    <title>ADMIN</title>
+</head>
+<body>
+    <div class="app">
+        <div class="page-admin">
+            <div class="sidebar hide" onblur="onToggleMenuClick(event)">
+                <div class="sidebar-header">
+                    <i class='bx bxs-devices'></i>
+                    <span>Device Manager</span>
+                </div>
+                <div class="user-mobie">
+                    <i class='bx bxs-user-circle'></i>
+                    <div class="header-user-name">Duc Nguyen</div>
+                </div>
+                <ul class="sidebar-list">
+                    <li class="sidebar-item" >
+                        <i class='bx bx-bar-chart-square'></i>
+                        <span class="sidebar-item-text" onclick="onSidebarClick(this)">Dashboard</span>
+                    </li>
+                    <li class="sidebar-item">
+                        <i class='bx bx-timer' ></i>
+                        <span class="sidebar-item-text active" onclick="onSidebarClick(this)">Logs</span>
+                    </li>
+                    <li class="sidebar-item">
+                        <i class='bx bxs-wrench'></i>
+                        <span class="sidebar-item-text" onclick="onSidebarClick(this)">Setting</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="main" onclick="onToggleMenuClick(event)">
+                <div class="main-header">
+                    <div class="header-user">
+                        <i class='bx bxs-user-circle'></i>
+                        <div class="header-user-name">Duc Nguyen</div>
+                    </div>
+                </div>
+                <div class="menu-mobie">
+                    <i class='bx bx-menu'></i>
+                </div>
+                <div class="main-body">
+                    <div class="dashboard none">
+
+                        <div class="dashboard-device">
+                            <table class="table-device hide">
+                                <thead>
+                                    <tr>
+                                        <th >Device</th>
+                                        <th >MAC Adress</th>
+                                        <th >IP</th>
+                                        <th >Create Date</th>
+                                        <th >Power Consumption ( KW/H )</th>
+                                      </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- <tr>
+                                        <td >TV</td>
+                                        <td >00:18:44:11:B7</td>
+                                        <td >127.2.1</td>
+                                        <td >2021-7</td>
+                                        <td >50</td>
+                                    </tr>
+                                    <tr>
+                                        <td >TV</td>
+                                        <td >00:18:44:11:B7</td>
+                                        <td >127.2.1</td>
+                                        <td >2021-7</td>
+                                        <td >50</td>
+                                    </tr>
+                                    <tr>
+                                        <td >TV</td>
+                                        <td >00:18:44:11:B7</td>
+                                        <td >127.2.1</td>
+                                        <td >2021-7</td>
+                                        <td >50</td>
+                                    </tr>
+                                    <tr class="total">
+                                        <td >Total</td>
+                                        <td ></td>
+                                        <td ></td>
+                                        <td ></td>
+                                        <td >150</td>
+                                    </tr> -->
+                                </tbody>
+                              </table>
+                        </div>
+                        <div class="main-bottom">
+                            <div class="main-chart">
+                                
+                            </div>
+                            <div class="main-form">
+                                    <div class="form-item">
+                                        <input type="text" placeholder="name" id="name" name="name">
+                                        <div class="errorMessage"></div>
+                                    </div>
+                                    <div class="form-item">
+                                        <input type="text" placeholder="id" id="id" name="id">
+                                    </div>
+                                    <div class="form-item form-item-power none">
+                                        <input type="number" placeholder="nhập thêm power" id="power" name="power">
+                                    </div>
+                                    <div class="form-message-device">
+                                        
+                                    </div>
+                                    <button class="button-submit" onclick="onAddDeviceClick()">
+                                        ADD DEVICE
+                                    </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="logs">
+                        <div class="logs-header">
+                            <div class="logs-header-title">Action Logs</div>
+                            <div class="logs-header-search">
+                                <input type="text" placeholder="name" value="" id="search" onmousedown="onDisplayHistory()" onblur="onDisplayHistory()">
+                                <button class="button-submit search" onclick="onSearchClick()">Search</button>
+                                <ul class="history none">
+                                    <li>abc</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="logs-body">
+                            <div class="dashboard-device">
+                                <table class="table-device">
+                                    <thead>
+                                        <tr>
+                                            <th >Device ID*</th>
+                                            <th >Name</th>
+                                            <th >Action</th>
+                                            <th >Date</th>
+                                          </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- <tr>
+                                            <td >101</td>
+                                            <td >TV</td>
+                                            <td >Turn on</td>
+                                            <td >124689</td>
+                                        </tr> -->
+                                    </tbody>
+                                  </table>
+                            </div>
+                        </div>
+                        <div class="pagigation">
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/data/dataDevice.js"></script>
+    <script src="/data/dataActionLogs.js"></script>
+    <script src="/admin.js"></script>
+
+</body>
+</html>
