@@ -33,11 +33,9 @@ if (!getStoreage("dataDevice")) {
 if (getStoreage("auth")) {
   let app = document.querySelector(".app");
   app.classList.remove("none");
-  console.log("login");
 } else {
   let pageNotFound = document.querySelector(".page-not-found");
   pageNotFound.classList.remove("none");
-  console.log("no");
 }
 
 function onRedirectLogin() {
@@ -127,11 +125,18 @@ function onAddDeviceClick(e) {
   }
 
   if (inputPower.value) {
+    const today = new Date();
+    const date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
     data.push({
       name: inputName.value,
       address: "",
       ip: inputId.value,
-      createDate: "",
+      createDate: date,
       power: parseInt(inputPower.value),
     });
 
@@ -229,24 +234,36 @@ function renderTableLogs(data, indexLogsRender) {
 renderTableLogs(dataRenderLog, 1);
 
 //pagigation
+let currentPage = 1;
 
-function renderPagigation(data, currentPage) {
-  let amountPagi = Math.ceil(data.length / 10);
+function renderPagigation() {
+  let amountPagi = Math.ceil(dataRenderLog.length / 10);
 
   let html = `<div class="next-prev" onclick=" onPrevious()"> < </div>`;
-  for (var i = 0; i < amountPagi; i++) {
-    if (i + 1 === currentPage) {
+
+  if (currentPage <= 5) {
+    for (var i = 1; i <= 5; i++) {
       html += `
-      <div class="pagigation-item active2" onclick="onPagigationClick(this.innerHTML)">${
-        i + 1
-      }</div>
-      `;
-    } else {
+          <div class="pagigation-item " onclick="onPagigationClick(this.innerHTML)">${i}</div>
+          `;
+    }
+  } else if (currentPage <= amountPagi - 2) {
+    for (var i = -2; i <= 2; i++) {
+      if (i > currentPage - 2 || i < currentPage + 2) {
+        html += `
+          <div class="pagigation-item " onclick="onPagigationClick(this.innerHTML)">${
+            i + currentPage
+          }</div>
+          `;
+      }
+    }
+  } else {
+    for (var i = 4; i >= 0; i--) {
       html += `
-      <div class="pagigation-item" onclick="onPagigationClick(this.innerHTML)">${
-        i + 1
-      }</div>
-      `;
+          <div class="pagigation-item " onclick="onPagigationClick(this.innerHTML)">${
+            amountPagi - i
+          }</div>
+          `;
     }
   }
 
@@ -255,53 +272,57 @@ function renderPagigation(data, currentPage) {
   listPagigation.innerHTML = html;
 }
 
-renderPagigation(dataRenderLog, 1);
+renderPagigation(1);
 
-function onPagigationClick(nextPage) {
+function onPagigationClick(page) {
+  console.log(currentPage);
+  currentPage = page;
+  console.log(currentPage);
   let listPage = document.querySelectorAll(".pagigation-item");
 
   Array.from(listPage).forEach((e) => {
     e.classList.remove("active2");
-    if (e.innerHTML == nextPage) {
+    if (e.innerHTML == currentPage) {
       e.classList.add("active2");
     }
   });
 
-  renderTableLogs(dataRenderLog, nextPage);
+  renderTableLogs(dataRenderLog, currentPage);
 }
 
+onPagigationClick(1);
+
 function onNext() {
-  let currentPage = 0;
-  let listPage = document.querySelectorAll(".pagigation-item");
+  let amountPagi = Math.ceil(dataRenderLog.length / 10);
+  console.log(amountPagi);
 
-  Array.from(listPage).forEach((e, index) => {
-    if (e.classList.contains("active2")) {
-      currentPage = index + 1;
+  if (currentPage !== amountPagi) {
+    currentPage = +currentPage + 1;
+    if (currentPage > 5) {
+      renderPagigation(currentPage);
+      onPagigationClick(currentPage);
+      renderTableLogs(dataRenderLog, currentPage);
+    } else {
+      onPagigationClick(currentPage);
+      renderTableLogs(dataRenderLog, currentPage);
     }
-  });
-
-  if (currentPage !== listPage.length) {
-    currentPage = currentPage + 1;
-    onPagigationClick(currentPage);
-
-    renderTableLogs(dataRenderLog, currentPage);
   }
 }
 
 function onPrevious() {
-  let currentPage;
-  let listPage = document.querySelectorAll(".pagigation-item");
-
-  Array.from(listPage).forEach((e, index) => {
-    if (e.classList.contains("active2")) {
-      currentPage = index + 1;
-    }
-  });
+  let amountPagi = Math.ceil(dataRenderLog.length / 10);
+  console.log(amountPagi);
 
   if (currentPage !== 1) {
-    currentPage = currentPage - 1;
-    onPagigationClick(currentPage);
-    renderTableLogs(dataRenderLog, currentPage);
+    currentPage = +currentPage - 1;
+    if (currentPage > 4) {
+      renderPagigation(currentPage);
+      onPagigationClick(currentPage);
+      renderTableLogs(dataRenderLog, currentPage);
+    } else {
+      onPagigationClick(currentPage);
+      renderTableLogs(dataRenderLog, currentPage);
+    }
   }
 }
 
@@ -309,24 +330,25 @@ function onPrevious() {
 
 function onSearchClick(t) {
   const history = getStoreage("searchHistory");
-  var value2;
-  if (t) {
-    document.querySelector("#search").value = t.value;
-  }
-  value2 = document.querySelector("#search").value;
+  var input;
+  // if (t) {
+  //   document.querySelector("#search").value = t.value;
+  // }
+
+  input = document.querySelector("#search").value;
 
   dataRenderLog = dataActionLogs.filter((e) =>
-    e.name.toUpperCase().includes(value2.toUpperCase())
+    e.name.toUpperCase().includes(input.toUpperCase())
   );
 
-  if (value2 !== "" && history.indexOf(value2) == -1) {
-    history.push(value2);
+  if (input !== "" && history.indexOf(input) == -1) {
+    history.push(input);
   }
 
   setStoreage("searchHistory", history);
-
   renderTableLogs(dataRenderLog, 1);
-  renderPagigation(dataRenderLog, 1);
+  renderPagigation();
+  onPagigationClick(1);
   renderSearchHistory();
 }
 

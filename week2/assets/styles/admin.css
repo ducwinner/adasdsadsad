@@ -225,6 +225,7 @@
 .main-chart {
     width: 45%;
     background-color: #fff;
+    box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
 }
 
 .main-chart p {
@@ -242,10 +243,11 @@
     justify-content: center;
     align-items: center;
     width: 45%;
+    box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
 }
 
 .form-item {
-    padding: 30px 40px;
+    padding: 25px 40px 10px 40px;
     display: flex;
     justify-content: center;
     width: 100%;
@@ -261,14 +263,19 @@
     outline: none;
     padding-left: 15px;
     background-color: #f9f4f4;
-    box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+    /* box-shadow: 0 2px 3px 0px rgb(179, 159, 159); */
 }
 
 .form-item input::placeholder {
     opacity: 0.3;
 }
 
+.form-item input:focus {
+    box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+}
+
 .form-message-device {
+    height: 16px;
     margin-bottom: 20px;
     color: rgb(232, 69, 69);
     font-size: 1.4rem;
@@ -277,6 +284,7 @@
 .button-submit {
     width: 150px;
     padding: 10px 0;
+    margin-bottom: 15px;
     text-align: center;
     font-size: 1.4rem;
     font-weight: 600;
@@ -340,6 +348,10 @@
     opacity: 0.1;
 }
 
+.logs-header-search input:focus {
+    box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+}
+
 .button-submit.search {
     width: 100px;
 }
@@ -385,48 +397,42 @@
     width: 100%;
     margin-top: 30px;
     display: flex; 
-    justify-content: center;
+    justify-content: end;
     align-items: center;
 }
 
 .pagigation-item,
 .next-prev {
     margin: 0 5px;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background-color: #ccc;
-    color: #fff;
+    width: 30px;
+    height: 30px;
+    background-color: #f6f6f7;
+    border: 1px solid #b8b8b8;
+    color: #5d5d5d;
     text-align: center;
-    line-height: 3.5rem;
-    font-size: 1.8rem;
-    font-weight: 500;
+    line-height: 3rem;
+    font-size: 1.5rem;
     cursor: pointer;
 }
 
+
+
+
+.pagigation-item.active2,
+.next-prev:hover,
 .pagigation-item:hover {
-    background-color: #7aa0eb;;
-}
-
-
-
-.pagigation-item.active2 {
-    background-color: #588ef8;
-    color: #fff;
+    border: 1px solid #3372ef;
+    color: #3475f7;
 }
 
 .next-prev {
-    font-size: 2.8rem;
+    font-size: 1.6rem;
     font-weight: 500;
     background-color: #f6f6f7;
     color: rgb(136, 135, 135);
     margin: 0 15px;
 }
 
-.next-prev:hover {
-    background-color: #8caef1;
-    color: #fff;
-}
 
 .menu-mobie {
     width: 80%;
