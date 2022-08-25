@@ -130,7 +130,6 @@ function onAddDeviceClick(e) {
 
 function ChartPower() {
   let dataChart = getStoreage("dataDevice");
-  console.log(dataChart);
   const data = {
     labels: [],
     datasets: [
@@ -177,8 +176,10 @@ ChartPower();
 
 // Render action logs
 
-let pagigation = 10;
-function renderTableLogs(data) {
+let dataRenderLog = dataActionLogs;
+
+function renderTableLogs(data, indexLogsRender) {
+  indexLogsRender = indexLogsRender * 10;
   let html = "";
   data.forEach((item, index) => {
     let id = item.id;
@@ -194,7 +195,7 @@ function renderTableLogs(data) {
       </tr>
       `;
 
-    if (pagigation - 10 <= index && index < pagigation) {
+    if (indexLogsRender - 10 <= index && index < indexLogsRender) {
       html += row;
     }
   });
@@ -202,53 +203,83 @@ function renderTableLogs(data) {
   tableLogs.innerHTML = html;
 }
 
-renderTableLogs(dataActionLogs);
+renderTableLogs(dataRenderLog, 1);
 
 //pagigation
 
 function renderPagigation(data, currentPage) {
-  let item = data.length / 10;
+  let amountPagi = Math.ceil(data.length / 10);
 
-  // check số lượng phần tử có nguyên hay không
-  if (item !== Math.floor(item)) {
-    item = Math.floor(item) + 1;
-  }
-
-  let html = "";
-  for (var i = 0; i < item; i++) {
+  let html = `<div class="next-prev" onclick=" onPrevious()"> < </div>`;
+  for (var i = 0; i < amountPagi; i++) {
     if (i + 1 === currentPage) {
       html += `
-      <div class="pagigation-item active2" onclick="onPagigationClick(this)">${
+      <div class="pagigation-item active2" onclick="onPagigationClick(this.innerHTML)">${
         i + 1
       }</div>
       `;
     } else {
       html += `
-      <div class="pagigation-item" onclick="onPagigationClick(this)">${
+      <div class="pagigation-item" onclick="onPagigationClick(this.innerHTML)">${
         i + 1
       }</div>
       `;
     }
   }
 
+  html += `<div class="next-prev" onclick="onNext()"> > </div>`;
+
   listPagigation.innerHTML = html;
 }
 
-renderPagigation(dataActionLogs, 1);
+renderPagigation(dataRenderLog, 1);
 
-function onPagigationClick(t) {
-  var nextPage = t.innerHTML;
-
+function onPagigationClick(nextPage) {
   let listPage = document.querySelectorAll(".pagigation-item");
+
   Array.from(listPage).forEach((e) => {
     e.classList.remove("active2");
-    if (e.innerHTML === nextPage) {
+    if (e.innerHTML == nextPage) {
       e.classList.add("active2");
     }
   });
-  pagigation = pagigation * nextPage;
-  renderTableLogs(dataActionLogs);
-  pagigation = 10;
+
+  renderTableLogs(dataRenderLog, nextPage);
+}
+
+function onNext() {
+  let currentPage = 0;
+  let listPage = document.querySelectorAll(".pagigation-item");
+
+  Array.from(listPage).forEach((e, index) => {
+    if (e.classList.contains("active2")) {
+      currentPage = index + 1;
+    }
+  });
+
+  if (currentPage !== listPage.length) {
+    currentPage = currentPage + 1;
+    onPagigationClick(currentPage);
+
+    renderTableLogs(dataRenderLog, currentPage);
+  }
+}
+
+function onPrevious() {
+  let currentPage;
+  let listPage = document.querySelectorAll(".pagigation-item");
+
+  Array.from(listPage).forEach((e, index) => {
+    if (e.classList.contains("active2")) {
+      currentPage = index + 1;
+    }
+  });
+
+  if (currentPage !== 1) {
+    currentPage = currentPage - 1;
+    onPagigationClick(currentPage);
+    renderTableLogs(dataRenderLog, currentPage);
+  }
 }
 
 // Search
@@ -261,7 +292,7 @@ function onSearchClick(t) {
   }
   value2 = document.querySelector("#search").value;
 
-  const dataSearch = dataActionLogs.filter((e) =>
+  dataRenderLog = dataActionLogs.filter((e) =>
     e.name.toUpperCase().includes(value2.toUpperCase())
   );
 
@@ -271,8 +302,8 @@ function onSearchClick(t) {
 
   setStoreage("searchHistory", history);
 
-  renderTableLogs(dataSearch);
-  renderPagigation(dataSearch, 1);
+  renderTableLogs(dataRenderLog, 1);
+  renderPagigation(dataRenderLog, 1);
   renderSearchHistory();
 }
 

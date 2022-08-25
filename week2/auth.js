@@ -2,11 +2,17 @@ function Validator() {
   let userName = document.querySelector("#username");
   let password = document.querySelector("#password");
   let formMessage = document.querySelector(".form-message");
+  let fields = document.querySelectorAll(".field");
+
+  // reset message input
+  Array.from(fields).forEach((e) => {
+    e.innerHTML = "";
+  });
 
   if (userName.value === "" || password.value === "") {
     formMessage.innerHTML = "Please enter all fields!";
   } else {
-    if (userName.value === "join") {
+    if (userName.value === "john") {
       if (password.value === "1234") {
         window.location.href = "./admin.html";
       } else {
