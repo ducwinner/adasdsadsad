@@ -160,6 +160,15 @@
     color: #323232;
 }
 
+.table-device tbody tr:hover td{
+    background-color: #0ba787;
+    color: #fff;
+}
+
+.table-device .total {
+    background-color: rgba(245, 245, 245,0.5);
+}
+
 
 
 /* main-bottom */
