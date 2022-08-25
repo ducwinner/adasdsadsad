@@ -360,7 +360,8 @@
     width: 200px;
     position: absolute;
     top: 38px;
-    border: 1px solid rgb(196, 194, 194);
+    border: 1px solid rgb(236, 236, 236);
+    box-shadow: 0 2px 1px 0 rgb(131, 131, 131) ;
     border-radius: 2px;
     background-color: #fff;
     padding: 10px 0 0 0;

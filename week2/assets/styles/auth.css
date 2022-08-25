@@ -56,6 +56,10 @@
     background-color: #f9f4f4;
 }
 
+.form-item input:focus {
+    box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+}
+
 .form-item input::placeholder {
     opacity: 0.3;
 }

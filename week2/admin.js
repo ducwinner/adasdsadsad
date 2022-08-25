@@ -363,8 +363,6 @@ function renderSearchHistory() {
   history.innerHTML = html;
 }
 
-renderSearchHistory();
-
 function onDisplayHistory() {
   let history = document.querySelector(".history");
   history.classList.toggle("none");
