@@ -10,7 +10,17 @@
     <title>ADMIN</title>
 </head>
 <body>
-    <div class="app">
+    <div class="page-not-found none">
+        <img src="https://freefrontend.com/assets/img/html-css-404-page-templates/Pure-CSS-404-Error-Page.gif" alt="page not found">
+        <div id="login"> 
+                <p>Verifying your account </p>
+                <div>
+                    <i class='bx bxs-hand-right'></i>
+                    <span onclick="onRedirectLogin()">LOGIN</span>
+                </div>
+        </div>
+    </div>
+    <div class="app none">
         <div class="page-admin">
             <div class="sidebar hide" onblur="onToggleMenuClick(event)">
                 <div class="sidebar-header">
@@ -119,7 +129,7 @@
                             </div>
                         </div>
                         <div class="pagigation">
-                            
+
                         </div>
                     </div>
 
@@ -130,6 +140,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth.js"></script>
     <script src="data/dataDevice.js"></script>
     <script src="data/dataActionLogs.js"></script>
     <script src="admin.js"></script>

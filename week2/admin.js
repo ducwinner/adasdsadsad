@@ -4,6 +4,15 @@ let tableDevice = document.querySelector(".dashboard tbody");
 let tableLogs = document.querySelector(".logs-body tbody");
 let listPagigation = document.querySelector(".pagigation");
 
+// console.log(Auth);
+// if (Auth) {
+//   let app = document.querySelector(".app");
+//   app.classList.remove("none");
+// } else {
+//   let pageNotFound = document.querySelector(".page-not-found");
+//   pageNotFound.classList.remove("none");
+// }
+
 // set, get localstorage
 function setStoreage(name, data) {
   localStorage.setItem(name, JSON.stringify(data));
@@ -19,6 +28,20 @@ if (!getStoreage("searchHistory")) {
 
 if (!getStoreage("dataDevice")) {
   setStoreage("dataDevice", dataDevice);
+}
+
+if (getStoreage("auth")) {
+  let app = document.querySelector(".app");
+  app.classList.remove("none");
+  console.log("login");
+} else {
+  let pageNotFound = document.querySelector(".page-not-found");
+  pageNotFound.classList.remove("none");
+  console.log("no");
+}
+
+function onRedirectLogin() {
+  window.location.href = "./auth.html";
 }
 
 //--------------------------

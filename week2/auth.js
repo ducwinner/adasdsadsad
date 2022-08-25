@@ -14,6 +14,7 @@ function Validator() {
   } else {
     if (userName.value === "john") {
       if (password.value === "1234") {
+        localStorage.setItem("auth", "true");
         window.location.href = "./admin.html";
       } else {
         formMessage.innerHTML = "Please confirm password! it's wrong";
