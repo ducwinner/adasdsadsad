@@ -272,7 +272,7 @@ function onSearchClick(t) {
   setStoreage("searchHistory", history);
 
   renderTableLogs(dataSearch);
-  renderPagigation(dataSearch);
+  renderPagigation(dataSearch, 1);
   renderSearchHistory();
 }
 
