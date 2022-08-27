@@ -15,12 +15,12 @@ html {
     font-family: 'Roboto', sans-serif;
 }
 
-.none {
+.hide {
     display: none !important;
 }
 
 .active {
-    color: #5ab4f5 !important;
+    color: rgb(255, 211, 35) !important;
 }
 
 @keyframes sideIn{

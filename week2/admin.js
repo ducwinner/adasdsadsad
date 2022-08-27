@@ -7,10 +7,10 @@ let listPagigation = document.querySelector(".pagigation");
 // console.log(Auth);
 // if (Auth) {
 //   let app = document.querySelector(".app");
-//   app.classList.remove("none");
+//   app.classList.remove("hide");
 // } else {
 //   let pageNotFound = document.querySelector(".page-not-found");
-//   pageNotFound.classList.remove("none");
+//   pageNotFound.classList.remove("hide");
 // }
 
 // set, get localstorage
@@ -22,21 +22,25 @@ function getStoreage(name) {
   return JSON.parse(localStorage.getItem(name));
 }
 
-if (!getStoreage("searchHistory")) {
-  setStoreage("searchHistory", []);
-}
+(function createInitStoreage() {
+  if (!getStoreage("searchHistory")) {
+    setStoreage("searchHistory", []);
+  }
 
-if (!getStoreage("dataDevice")) {
-  setStoreage("dataDevice", dataDevice);
-}
+  if (!getStoreage("dataDevice")) {
+    setStoreage("dataDevice", dataDevice);
+  }
+})();
 
-if (getStoreage("auth")) {
-  let app = document.querySelector(".app");
-  app.classList.remove("none");
-} else {
-  let pageNotFound = document.querySelector(".page-not-found");
-  pageNotFound.classList.remove("none");
-}
+(function isLogin() {
+  if (getStoreage("auth")) {
+    let app = document.querySelector(".app");
+    app.classList.remove("hide");
+  } else {
+    let pageNotFound = document.querySelector(".page-not-found");
+    pageNotFound.classList.remove("hide");
+  }
+})();
 
 function onRedirectLogin() {
   window.location.href = "./auth.html";
@@ -50,9 +54,9 @@ function onSidebarClick(t) {
 
     if (t === item) {
       Array.from(listBodys).map((item, index2) => {
-        item.classList.add("none");
+        item.classList.add("hide");
         if (index1 == index2) {
-          item.classList.remove("none");
+          item.classList.remove("hide");
         }
       });
     }
@@ -101,22 +105,31 @@ function renderTableDevice() {
 
 renderTableDevice();
 
-// ADD Device
-function onAddDeviceClick(e) {
+function addPowerInput(inputName, inputId, inputPower) {
   let data = getStoreage("dataDevice");
-  let inputName = document.querySelector("#name");
-  let inputId = document.querySelector("#id");
-  let formPower = document.querySelector(".form-item-power");
-  let inputPower = document.querySelector("#power");
-  let mesageDevice = document.querySelector(".form-message-device");
+  const today = new Date();
+  const date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
 
-  // validate
-  if (inputName.value !== "" && inputId.value !== "") {
+  data.push({
+    name: inputName,
+    address: "",
+    ip: inputId,
+    createDate: date,
+    power: parseInt(inputPower),
+  });
+
+  setStoreage("dataDevice", data);
+}
+
+function Validate(name, IP) {
+  let mesageDevice = document.querySelector(".form-message-device");
+  if (name !== "" && IP !== "") {
     var vnf_regex =
       /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    if (vnf_regex.test(inputId.value)) {
-      formPower.classList.remove("none");
+    if (vnf_regex.test(IP)) {
       mesageDevice.innerHTML = "Vui lòng nhập Power";
+      return true;
     } else {
       mesageDevice.innerHTML = "Địa chỉ IP không hợp lệ";
     }
@@ -124,33 +137,36 @@ function onAddDeviceClick(e) {
     mesageDevice.innerHTML = "Vui lòng nhập đủ các trường";
   }
 
-  if (inputPower.value) {
-    const today = new Date();
-    const date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-    data.push({
-      name: inputName.value,
-      address: "",
-      ip: inputId.value,
-      createDate: date,
-      power: parseInt(inputPower.value),
-    });
+  return false;
+}
 
-    setStoreage("dataDevice", data);
+// ADD Device
+function onAddDeviceClick(e) {
+  let inputName = document.querySelector("#name");
+  let inputId = document.querySelector("#id");
+  let inputPower = document.querySelector("#power");
+  let mesageDevice = document.querySelector(".form-message-device");
 
-    // clear input value,  ẩn power input
-    formPower.classList.add("none");
-    inputName.value = "";
-    inputId.value = "";
-    mesageDevice.innerHTML = "";
-    inputPower.value = "";
+  // validate
+  let isOk = Validate(inputName.value, inputId.value);
 
-    ChartPower();
-    renderTableDevice();
+  if (isOk) {
+    inputPower.classList.remove("hide");
+    if (inputPower.value) {
+      addPowerInput(inputName, inputId, inputPower);
+      ChartPower();
+      renderTableDevice();
+
+      inputName.value = "";
+      inputId.value = "";
+      mesageDevice.innerHTML = "";
+      inputPower.value = "";
+      inputPower.classList.add("hide");
+    } else {
+      Validate(inputName.value, inputId.value);
+    }
+  } else {
+    inputPower.classList.add("hide");
   }
 }
 
@@ -205,9 +221,12 @@ ChartPower();
 // Render action logs
 
 let dataRenderLog = dataActionLogs;
+let currentPage = 1;
 
 function renderTableLogs(data, indexLogsRender) {
-  indexLogsRender = indexLogsRender * 10;
+  const rowTableLog = 10;
+
+  indexLogsRender *= rowTableLog;
   let html = "";
   data.forEach((item, index) => {
     let id = item.id;
@@ -223,7 +242,7 @@ function renderTableLogs(data, indexLogsRender) {
       </tr>
       `;
 
-    if (indexLogsRender - 10 <= index && index < indexLogsRender) {
+    if (indexLogsRender - rowTableLog <= index && index < indexLogsRender) {
       html += row;
     }
   });
@@ -234,7 +253,6 @@ function renderTableLogs(data, indexLogsRender) {
 renderTableLogs(dataRenderLog, 1);
 
 //pagigation
-let currentPage = 1;
 
 function renderPagigation() {
   let amountPagi = Math.ceil(dataRenderLog.length / 10);
@@ -275,9 +293,7 @@ function renderPagigation() {
 renderPagigation(1);
 
 function onPagigationClick(page) {
-  console.log(currentPage);
   currentPage = page;
-  console.log(currentPage);
   let listPage = document.querySelectorAll(".pagigation-item");
 
   Array.from(listPage).forEach((e) => {
@@ -294,7 +310,6 @@ onPagigationClick(1);
 
 function onNext() {
   let amountPagi = Math.ceil(dataRenderLog.length / 10);
-  console.log(amountPagi);
 
   if (currentPage !== amountPagi) {
     currentPage = +currentPage + 1;
@@ -311,7 +326,6 @@ function onNext() {
 
 function onPrevious() {
   let amountPagi = Math.ceil(dataRenderLog.length / 10);
-  console.log(amountPagi);
 
   if (currentPage !== 1) {
     currentPage = +currentPage - 1;
@@ -363,9 +377,14 @@ function renderSearchHistory() {
   history.innerHTML = html;
 }
 
-function onDisplayHistory() {
+function onShowHistory() {
   let history = document.querySelector(".history");
-  history.classList.toggle("none");
+  history.classList.remove("hide");
+}
+
+function onHideHistory() {
+  let history = document.querySelector(".history");
+  history.classList.add("hide");
 }
 
 // function onDeleteHistoryClick(t) {
@@ -379,8 +398,8 @@ function onToggleMenuClick(e) {
   let sidebar = document.querySelector(".sidebar");
   let menu = document.querySelector(".menu-mobie i");
   if (e.target === menu) {
-    sidebar.classList.remove("hide");
+    sidebar.classList.remove("hideMobide");
   } else {
-    sidebar.classList.add("hide");
+    sidebar.classList.add("hideMobide");
   }
 }

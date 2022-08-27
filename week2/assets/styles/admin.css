@@ -79,7 +79,7 @@
 .sidebar-header span{
     font-size: 1.5rem;
     font-weight: 600;
-    color: #7b7979;
+    color: #4d4d4d;
 }
 
 .sidebar-list {
@@ -102,8 +102,12 @@
 .sidebar-item-text {
     font-size: 1.3rem;
     font-weight: 600;
-    color: #999797;
+    color: #666666;
     cursor: pointer;
+}
+
+.sidebar-item-text:hover {
+    color: rgb(218, 177, 16);
 }
 
 /* Main content */
@@ -156,15 +160,16 @@
     border-radius: 5px;
     border-collapse: collapse;
     box-shadow: 0 0 1px 1px rgb(231, 231, 231);
+    border: 1px solid #ccc;
 }
 
 .table-device thead tr {
-    background-color: #039376;
+    background-color: #ebebdc;
 } 
 
 .table-device tr th {
     border-bottom: 1px solid rgb(125, 125, 125);
-    color: #fff;
+    color: rgb(44, 44, 44);
 }
 
 .table-device td {
@@ -181,7 +186,7 @@
     text-align: end;
     font-size: 1.3rem;
     font-weight: 600;
-    color: #989898;
+    color: #646464;
 }
 
 .table-device td:first-child,
@@ -205,8 +210,7 @@
 }
 
 .table-device tbody tr:hover td{
-    background-color: #0ba787;
-    color: #fff;
+    background-color: #f8faed;
 }
 
 .table-device .total {
@@ -247,7 +251,6 @@
 }
 
 .form-item {
-    padding: 25px 40px 10px 40px;
     display: flex;
     justify-content: center;
     width: 100%;
@@ -257,13 +260,14 @@
 .form-item input {
     width: 100%;
     height: 60px;
+    margin: 25px 40px 10px 40px;
     font-size: 1.6rem;
     font-weight: 400;
     border: none;
     outline: none;
     padding-left: 15px;
-    background-color: #f9f4f4;
-    /* box-shadow: 0 2px 3px 0px rgb(179, 159, 159); */
+    background-color: #ffffff;
+    border: 1px solid rgb(218, 218, 218);
 }
 
 .form-item input::placeholder {
@@ -272,11 +276,12 @@
 
 .form-item input:focus {
     box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+    border: 1px solid rgb(253, 212, 46);
 }
 
 .form-message-device {
     height: 16px;
-    margin-bottom: 20px;
+    margin: 5px 0 20px 0;
     color: rgb(232, 69, 69);
     font-size: 1.4rem;
 }
@@ -288,16 +293,17 @@
     text-align: center;
     font-size: 1.4rem;
     font-weight: 600;
-    background-color: #f28e19;
+    background-color: rgb(252, 209, 36);
     color: #fff;
     border-radius: 10px;
+    transform: translateY(1px);
     border: none;
     box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
     cursor: pointer;
 }
 
 .button-submit:hover {
-    background-color: #efa046;
+    background-color: rgb(245, 197, 8);
 }
 
 .button-search {
@@ -322,7 +328,8 @@
 }
 
 .logs-header-title {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+    transform: translateY(8px);
     font-weight: 600;
     line-height: 35px;
 }
@@ -336,10 +343,10 @@
     height: 35px;
     font-size: 1.6rem;
     font-weight: 400;
-    border: none;
     outline: none;
     padding-left: 15px;
-    background-color: #ebd8d8;
+    background-color: #ffffff;
+    border: 1px solid rgb(218, 218, 218);
     margin-right: 10px;
     transform: translateY(2px);
 }
@@ -350,6 +357,7 @@
 
 .logs-header-search input:focus {
     box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+    border: 1px solid rgb(253, 212, 46);
 }
 
 .button-submit.search {
@@ -359,7 +367,8 @@
 .history {
     width: 200px;
     position: absolute;
-    top: 38px;
+    border-radius: 3px;
+    top: 40px;
     border: 1px solid rgb(236, 236, 236);
     box-shadow: 0 2px 1px 0 rgb(131, 131, 131) ;
     border-radius: 2px;
@@ -422,8 +431,8 @@
 .pagigation-item.active2,
 .next-prev:hover,
 .pagigation-item:hover {
-    border: 1px solid #3372ef;
-    color: #3475f7;
+    border: 1px solid rgb(252, 209, 36);
+    color: rgb(252, 209, 36);
 }
 
 .next-prev {
@@ -472,7 +481,7 @@
 /* Responsive */
 
 @media (max-width: 415px) {
-    .hide {
+    .hideMobide {
         display: none;
     }
 
@@ -485,10 +494,6 @@
         animation: sideIn linear 0.3s forwards;
     }
 
-    .sidebar-header {
-        display: none;
-    }
-
     .user-mobie {
         display: flex;
     }
@@ -498,10 +503,6 @@
         margin-left: 0;
         width: 100%;
         position: relative;
-    }
-
-    .main-header {
-        display: none;
     }
 
     .dashboard {

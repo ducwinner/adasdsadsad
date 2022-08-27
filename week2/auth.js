@@ -1,13 +1,17 @@
-function Validator() {
-  let userName = document.querySelector("#username");
-  let password = document.querySelector("#password");
-  let formMessage = document.querySelector(".form-message");
-  let fields = document.querySelectorAll(".field");
+let userName = document.querySelector("#username");
+let password = document.querySelector("#password");
+let formMessage = document.querySelector(".form-message");
+let fields = document.querySelectorAll(".field");
 
-  // reset message input
+function resetMessage() {
   Array.from(fields).forEach((e) => {
     e.innerHTML = "";
   });
+}
+
+function Validator() {
+  // reset message input
+  resetMessage();
 
   if (userName.value === "" || password.value === "") {
     formMessage.innerHTML = "Please enter all fields!";
@@ -25,12 +29,16 @@ function Validator() {
   }
 }
 
-function isRequired(t) {
-  const id = t.getAttribute("id");
+function isRequired(input) {
+  const id = input.getAttribute("id");
   let message = document.querySelector(`.message-${id}`);
 
-  if (!t.value) {
+  if (!input.value) {
     message.innerHTML = "Please enter this fields!";
+    input.style.border = "1px solid rgb(226, 69, 69)";
+  } else {
+    message.innerHTML = "";
+    input.style.border = "1px solid rgb(218, 218, 218)";
   }
 }
 

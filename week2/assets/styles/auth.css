@@ -27,9 +27,9 @@
 }
 
 .form-header p {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     font-weight: 600;
-    color: #747272
+    color: rgb(30, 35, 41)
 }
 
 .form-item {
@@ -53,11 +53,13 @@
     border: none;
     outline: none;
     padding-left: 15px;
-    background-color: #f9f4f4;
+    background-color: #ffffff;
+    border: 1px solid rgb(218, 218, 218);
 }
 
 .form-item input:focus {
     box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+    border: 1px solid rgb(253, 212, 46);
 }
 
 .form-item input::placeholder {
@@ -85,7 +87,7 @@
     padding: 10px 40px;
     font-size: 1.5rem;
     font-weight: 600;
-    background-color: #f28e19;
+    background-color: rgb(253, 212, 46);
     color: #fff;
     border-radius: 10px;
     border: none;
@@ -94,7 +96,7 @@
 }
 
 .button-submit:hover {
-    background-color: #efa046;
+    background-color: rgb(253, 220, 87);
 }
 
 .form-bottom .other {
@@ -102,12 +104,13 @@
     line-height: 45px;
     font-size: 1.6rem;
     font-weight: 500;
-    color: #569ef3;
+    color: rgb(201, 148, 0);
     text-align: center;
     cursor: pointer;
 }
 
 .form-bottom .other:hover {
+    color: rgb(252, 200, 58);
     text-decoration: underline;
 }
 

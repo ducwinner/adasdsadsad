@@ -10,7 +10,7 @@
     <title>ADMIN</title>
 </head>
 <body>
-    <div class="page-not-found none">
+    <div class="page-not-found hide">
         <img src="https://freefrontend.com/assets/img/html-css-404-page-templates/Pure-CSS-404-Error-Page.gif" alt="page not found">
         <div id="login"> 
                 <p>Verifying your account </p>
@@ -20,10 +20,10 @@
                 </div>
         </div>
     </div>
-    <div class="app none">
+    <div class="app hide">
         <div class="page-admin">
-            <div class="sidebar hide" onblur="onToggleMenuClick(event)">
-                <div class="sidebar-header">
+            <div class="sidebar hideMobide" onblur="onToggleMenuClick(event)">
+                <div class="sidebar-header hideMobide">
                     <i class='bx bxs-devices'></i>
                     <span>Device Manager</span>
                 </div>
@@ -47,7 +47,7 @@
                 </ul>
             </div>
             <div class="main" onclick="onToggleMenuClick(event)">
-                <div class="main-header">
+                <div class="main-header hideMobide">
                     <div class="header-user">
                         <i class='bx bxs-user-circle'></i>
                         <div class="header-user-name">Duc Nguyen</div>
@@ -57,10 +57,10 @@
                     <i class='bx bx-menu'></i>
                 </div>
                 <div class="main-body">
-                    <div class="dashboard none">
+                    <div class="dashboard hide">
 
                         <div class="dashboard-device">
-                            <table class="table-device hide">
+                            <table class="table-device hideMobide">
                                 <thead>
                                     <tr>
                                         <th >Device</th>
@@ -87,8 +87,8 @@
                                     <div class="form-item">
                                         <input type="text" placeholder="id" id="id" name="id">
                                     </div>
-                                    <div class="form-item form-item-power none">
-                                        <input type="number" placeholder="nhập thêm power" id="power" name="power">
+                                    <div class="form-item form-item-power">
+                                        <input class="hide" type="number" placeholder="nhập thêm power" id="power" name="power">
                                     </div>
                                     <div class="form-message-device">
                                         
@@ -104,9 +104,9 @@
                         <div class="logs-header">
                             <div class="logs-header-title">Action Logs</div>
                             <div class="logs-header-search">
-                                <input type="text" placeholder="name" value="" id="search" onmousedown="onDisplayHistory()" onblur="onDisplayHistory()">
+                                <input type="text" placeholder="name" value="" id="search" onmousedown="onShowHistory()" onblur="onHideHistory()">
                                 <button class="button-submit search" onclick="onSearchClick()">Search</button>
-                                <ul class="history none">
+                                <ul class="history hide">
                                     <li>abc</li>
                                 </ul>
                             </div>
