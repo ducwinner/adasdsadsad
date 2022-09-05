@@ -1,0 +1,23 @@
+.button-submit {
+    width: 150px;
+    padding: 10px 0;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+    background-color: rgb(252, 209, 36);
+    color: #fff;
+    border-radius: 10px;
+    transform: translateY(1px);
+    border: none;
+    box-shadow: 0 2px 3px 0px rgb(179, 159, 159);
+    cursor: pointer;
+  }
+  
+  .button-submit:hover {
+    background-color: rgb(245, 197, 8);
+  }
+
+  .button-submit.search {
+    width: 100px;
+  }

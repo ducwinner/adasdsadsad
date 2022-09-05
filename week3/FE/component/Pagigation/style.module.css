@@ -1,0 +1,39 @@
+.pagigation {
+    width: 100%;
+    margin-top: 30px;
+    display: flex; 
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .pagigation-item,
+  .next-prev {
+    margin: 0 5px;
+    width: 30px;
+    height: 30px;
+    background-color: #f6f6f7;
+    border: 1px solid #b8b8b8;
+    color: #5d5d5d;
+    text-align: center;
+    line-height: 3rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  
+  
+  
+  .pagigation-item.active2,
+  .next-prev:hover,
+  .pagigation-item:hover {
+    border: 1px solid rgb(252, 209, 36);
+    color: rgb(252, 209, 36);
+  }
+  
+  .next-prev {
+    font-size: 1.6rem;
+    font-weight: 500;
+    background-color: #f6f6f7;
+    color: rgb(136, 135, 135);
+    margin: 0 15px;
+  }
