@@ -1,10 +1,11 @@
 import Layout from '../../../layout';
 import styles from '../../../styles/Admin.module.css';
 import classnames from 'classnames/bind';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import ChartPower from '../../../component/ChartPie';
 import Button from '../../../component/Button';
 import { addDataDevices, getDataDevice } from '../../../api/dasdboard';
+import cookie from 'cookie';
 
 const cx = classnames.bind(styles);
 const rowTableLog = 10;
@@ -14,7 +15,7 @@ function Dashboard({ dataDevices, userId }) {
   const [name, setName] = useState('');
   const [ip, setIp] = useState('');
   const [power, setPower] = useState('');
-  const [validateMsg, setValidateMsg] = useState({ isPower: false, msg: '' });
+  const [validateMsg, setValidateMsg] = useState();
 
   const onNameChange = (e) => {
     setName(e.target.value);
@@ -28,27 +29,36 @@ function Dashboard({ dataDevices, userId }) {
     setPower(e.target.value);
   };
 
-  const validateAll = () => {
+  const validateAll = useCallback(() => {
     const msg = '';
     if (name !== '' && ip !== '') {
-      var vnf_regex =
+      const vnf_regex =
         /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
       if (vnf_regex.test(ip)) {
-        msg = { isPower: true, msg: 'Vui lòng nhập Power' };
-        setValidateMsg(msg);
-        return true;
+        if (power) {
+          const regex = /^[1-9][0-9]*$/;
+          if (!regex.test(power)) {
+            msg = 'Power value is an integer ( > 0 )';
+            setValidateMsg(msg);
+          } else {
+            return true;
+          }
+        } else {
+          msg = 'Vui lòng nhập Power';
+        }
       } else {
-        msg = { isPower: false, msg: 'Địa chỉ IP không hợp lệ' };
+        msg = 'Địa chỉ IP không hợp lệ';
       }
     } else {
-      msg = { isPower: false, msg: 'Vui lòng nhập đủ các trường' };
+      msg = 'Vui lòng nhập đủ các trường';
     }
 
     setValidateMsg(msg);
     return false;
-  };
+  }, [power, validateMsg, ip]);
 
-  const onAddDevice = () => {
+  const onAddDevice = useCallback(() => {
+    validateAll();
     const isValid = validateAll();
     if (!isValid) return;
     if (power) {
@@ -66,19 +76,18 @@ function Dashboard({ dataDevices, userId }) {
 
       setDataDeviceRedner((prev) => [...prev, dataAdd]);
 
-      // add Api
+      // Api add
       const response = addDataDevices(dataAdd);
-      console.log(response);
 
       // reset value input
       setName('');
       setPower('');
       setIp('');
-      setValidateMsg({ isPower: false, msg: '' });
+      setValidateMsg('');
     } else {
       validateAll();
     }
-  };
+  }, [power, name, ip]);
   return (
     <Layout>
       <div className={cx('dashboard')}>
@@ -117,12 +126,10 @@ function Dashboard({ dataDevices, userId }) {
             <div className={cx('form-item')}>
               <input type="text" value={ip} placeholder="id" onChange={onIpChange} />
             </div>
-            {validateMsg.isPower ? (
-              <div className={cx('form-item', 'form-item-power')}>
-                <input type="number" value={power} onChange={onPowerChange} placeholder="nhập thêm power" />
-              </div>
-            ) : null}
-            <div className={cx('form-message-device')}>{validateMsg.msg}</div>
+            <div className={cx('form-item', 'form-item-power')}>
+              <input type="number" value={power} onChange={onPowerChange} placeholder="nhập thêm power" />
+            </div>
+            <div className={cx('form-message-device')}>{validateMsg}</div>;
             <Button text="ADD Device" onClick={onAddDevice} />
           </div>
         </div>
@@ -131,17 +138,26 @@ function Dashboard({ dataDevices, userId }) {
   );
 }
 
-export const getServerSideProps = async ({ params }) => {
-  console.log(rowTableLog);
-  const userId = params.userId;
-  const response = await getDataDevice(params);
-  let dataDevices = response.data;
-  return {
-    props: {
-      dataDevices,
-      userId,
-    },
-  };
+export const getServerSideProps = async ({ req }) => {
+  const dataCookie = cookie.parse(req.headers.cookie);
+  const userId = dataCookie.userId;
+  if (userId) {
+    const response = await getDataDevice({ userId });
+    let dataDevices = response.data;
+    return {
+      props: {
+        dataDevices,
+        userId,
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
 };
 
 export default Dashboard;

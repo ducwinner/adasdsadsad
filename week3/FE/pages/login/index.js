@@ -2,12 +2,14 @@ import styles from '../../styles/Login.module.css';
 import classnames from 'classnames/bind';
 import Button from '../../component/Button';
 import { apiLogin } from '../../api/user';
-import { useState } from 'react';
-import { setStoreage } from '../../globalFunction/LocalStoreage';
+import { useCallback, useState } from 'react';
+import { setStoreage } from '../../globalFunction/LocalStorage';
+import { useCookies } from 'react-cookie';
 
 const cx = classnames.bind(styles);
 
 function Login() {
+  const [cookies, setCookie] = useCookies('');
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [msgName, setMsgName] = useState('');
@@ -22,25 +24,25 @@ function Login() {
     setPassword(e.target.value);
   };
 
-  const isRequireUsername = (e) => {
+  const isRequireUsername = useCallback((e) => {
     const value = e.target.value;
     if (!value) {
       setMsgName('Please enter Username!');
     } else {
       setMsgName('');
     }
-  };
+  }, []);
 
-  const isRequirePassword = (e) => {
+  const isRequirePassword = useCallback((e) => {
     const value = e.target.value;
     if (!value) {
       setMsgPassword('Please enter Password!');
     } else {
       setMsgPassword('');
     }
-  };
+  }, []);
 
-  const validateAll = async () => {
+  const validateAll = useCallback(async () => {
     if (msgName !== '' || msgPassword !== '') return;
     let msg = '';
     const data = await apiLogin({ userName, password });
@@ -48,20 +50,11 @@ function Login() {
     if (data.errCode !== 0) {
       msg = data.message;
     } else {
-      console.log(data);
-      setStoreage('auth', true);
-      setStoreage('userId', data.data.id);
-      window.location.href = `admin/dashboard/${data.data.id}`;
+      setCookie('userId', data.data.id);
+      window.location.href = `admin/dashboard`;
     }
-    // if (userName !== 'john') {
-    //   msg = 'User does not exist! plz check';
-    // } else if (password !== '1234') {
-    //   msg = "Please confirm password! it's wrong";
-    // } else {
-    //   window.location.href = '/admin/1';
-    // }
     setMsgError(msg);
-  };
+  }, [msgName, msgPassword]);
 
   const onSubmit = () => {
     validateAll();

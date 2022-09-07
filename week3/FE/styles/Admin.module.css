@@ -379,7 +379,7 @@
   color: rgb(220, 40, 40);
 }
 
-/* pagigation */
+/* pagination */
 
 
 .menu-mobie {
@@ -415,10 +415,21 @@
   color: #7b7979;
 }
 
+/* Animation */
+
+@keyframes sideIn{
+  from {
+      transform: translateX(-100px);
+  }
+  to {
+      transform: translateX(0);
+  }
+}
+
 
 /* Responsive */
 
-@media (max-width: 415px) {
+@media (max-width: 414px) {
   .hideMobide {
       display: none;
   }

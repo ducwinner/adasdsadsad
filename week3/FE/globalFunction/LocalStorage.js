@@ -1,7 +1,7 @@
-export function setStoreage(name, data) {
+export function setStorage(name, data) {
   localStorage.setItem(name, JSON.stringify(data));
 }
 
-export function getStoreage(name) {
+export function getStorage(name) {
   return JSON.parse(localStorage.getItem(name));
 }

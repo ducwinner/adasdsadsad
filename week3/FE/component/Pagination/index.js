@@ -1,16 +1,14 @@
-import styles from "./style.module.css";
-import classnames from "classnames/bind";
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styles from './style.module.css';
+import classnames from 'classnames/bind';
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const cx = classnames.bind(styles);
 
-function Pagigation({ dataLength, rowOfTable, currentPage, onPageClick }) {
+function Pagination({ dataLength, rowOfTable, currentPage, onPageClick }) {
   let amountPage = Math.ceil(dataLength / rowOfTable);
   let arrRender = [];
 
-  console.log(currentPage);
-  console.log(amountPage);
   const listPageRender = () => {
     if (currentPage <= 5) {
       for (let i = 1; i <= 5; i++) {
@@ -32,23 +30,23 @@ function Pagigation({ dataLength, rowOfTable, currentPage, onPageClick }) {
   listPageRender();
 
   return (
-    <div className={cx("pagigation")}>
+    <div className={cx('pagination')}>
       <FontAwesomeIcon
         onClick={(e) => {
-          onPageClick(e, "prev");
+          onPageClick(e, 'prev');
         }}
         icon={faAngleLeft}
-        className={cx("next-prev")}
+        className={cx('next-prev')}
       />
       {arrRender.map((e, index) => {
         if (currentPage == e) {
           return (
             <div
               onClick={(e) => {
-                onPageClick(e, "this");
+                onPageClick(e, 'this');
               }}
               key={index}
-              className={cx("pagigation-item", "active2")}
+              className={cx('pagination-item', 'active2')}
             >
               {e}
             </div>
@@ -57,10 +55,10 @@ function Pagigation({ dataLength, rowOfTable, currentPage, onPageClick }) {
           return (
             <div
               onClick={(e) => {
-                onPageClick(e, "this");
+                onPageClick(e, 'this');
               }}
               key={index}
-              className={cx("pagigation-item")}
+              className={cx('pagination-item')}
             >
               {e}
             </div>
@@ -69,13 +67,13 @@ function Pagigation({ dataLength, rowOfTable, currentPage, onPageClick }) {
       })}
       <FontAwesomeIcon
         onClick={(e) => {
-          onPageClick(e, "next");
+          onPageClick(e, 'next');
         }}
         icon={faAngleRight}
-        className={cx("next-prev")}
+        className={cx('next-prev')}
       />
     </div>
   );
 }
 
-export default Pagigation;
+export default Pagination;

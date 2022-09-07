@@ -1,23 +1,25 @@
 import Layout from '../../../layout';
 import styles from '../../../styles/Admin.module.css';
 import classnames from 'classnames/bind';
-import { useEffect, useState } from 'react';
-import { dataActionLogs } from '../../../data/dataActionLogs';
-import Pagigation from '../../../component/Pagigation';
+import { useCallback, useEffect, useState } from 'react';
+import Pagination from '../../../component/Pagination';
 import Button from '../../../component/Button';
+import { getActionLogs } from '../../../api/logs';
+import cookie from 'cookie';
 
 const cx = classnames.bind(styles);
 const rowTableLog = 10;
 
-function Logs() {
+function Logs({ data }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [dataLogs, setDataLogs] = useState(dataActionLogs);
-  const [dataRenderLog, setDataRenderLog] = useState(() => dataActionLogs.filter((e, index) => index < 10));
+  const [dataLogs, setDataLogs] = useState(data);
+  const [dataRenderLog, setDataRenderLog] = useState(() => data.filter((e, index) => index < 10));
   const [valueSearch, setValueSearch] = useState('');
 
   const onSearchChange = (e) => {
     setValueSearch(e.target.value);
   };
+
   // filler 10 Logs
   useEffect(() => {
     const lastIndexLogsRender = +currentPage * rowTableLog;
@@ -28,13 +30,13 @@ function Logs() {
   }, [currentPage, dataLogs]);
 
   const onSearchClick = () => {
-    const dataSearch = dataActionLogs.filter((e) => e.name.toUpperCase().includes(valueSearch.toUpperCase()));
+    const dataSearch = data.filter((e) => e.name.toUpperCase().includes(valueSearch.toUpperCase()));
 
     setDataLogs(dataSearch);
     setCurrentPage(1);
   };
 
-  const onPageClick = (e, type) => {
+  const onPageClick = useCallback((e, type) => {
     if (type == 'next') {
       setCurrentPage((prev) => prev + 1);
     } else if (type == 'prev') {
@@ -42,7 +44,8 @@ function Logs() {
     } else {
       setCurrentPage(+e.target.innerText);
     }
-  };
+  });
+
   return (
     <Layout>
       <div className={cx('logs')}>
@@ -80,10 +83,30 @@ function Logs() {
             </table>
           </div>
         </div>
-        <Pagigation dataLength={dataLogs.length} rowOfTable={10} currentPage={currentPage} onPageClick={onPageClick} />
+        <Pagination dataLength={dataLogs.length} rowOfTable={10} currentPage={currentPage} onPageClick={onPageClick} />
       </div>
     </Layout>
   );
 }
 
+export const getServerSideProps = async ({ req }) => {
+  const dataCookie = cookie.parse(req.headers.cookie);
+  const userId = dataCookie.userId;
+  if (userId) {
+    const response = await getActionLogs({ userId });
+    let data = response.data;
+    return {
+      props: {
+        data,
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+};
 export default Logs;

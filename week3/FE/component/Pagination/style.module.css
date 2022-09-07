@@ -1,4 +1,4 @@
-.pagigation {
+.pagination {
     width: 100%;
     margin-top: 30px;
     display: flex; 
@@ -6,7 +6,7 @@
     align-items: center;
   }
   
-  .pagigation-item,
+  .pagination-item,
   .next-prev {
     margin: 0 5px;
     width: 30px;
@@ -23,9 +23,9 @@
   
   
   
-  .pagigation-item.active2,
+  .pagination-item.active2,
   .next-prev:hover,
-  .pagigation-item:hover {
+  .pagination-item:hover {
     border: 1px solid rgb(252, 209, 36);
     color: rgb(252, 209, 36);
   }

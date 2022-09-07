@@ -11,7 +11,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { setStoreage, getStoreage } from '../globalFunction/LocalStoreage';
+import { setStorage, getStorage } from '../globalFunction/LocalStorage';
 
 const cx = classnames.bind(styles);
 
@@ -20,16 +20,16 @@ function Layout({ children }) {
   const [navId, setNavId] = useState('1');
 
   useEffect(() => {
-    const id = getStoreage('navId');
+    const id = getStorage('navId');
     if (!id) {
-      setStoreage('navId', 1);
+      setStorage('navId', 1);
     } else {
       setNavId(id);
     }
   }, []);
 
   const onSetNavItem = (id) => {
-    setStoreage('navId', id);
+    setStorage('navId', id);
   };
 
   const onHideMenu = () => {
@@ -55,7 +55,7 @@ function Layout({ children }) {
             <ul className={cx('sidebar-list')}>
               <li className={cx('sidebar-item')}>
                 <FontAwesomeIcon icon={faChartPie} className={cx('nav-icon')} />
-                <Link href="/admin/dashboard/1">
+                <Link href="/admin/dashboard">
                   <a
                     onClick={() => onSetNavItem('1')}
                     className={cx('sidebar-item-text', navId === '1' || undefined ? 'active' : null)}
