@@ -139,7 +139,11 @@ function Dashboard({ dataDevices, userId }) {
 }
 
 export const getServerSideProps = async ({ req }) => {
-  const dataCookie = cookie.parse(req.headers.cookie);
+  let cookieHeader = req.headers.cookie;
+  if (typeof cookieHeader !== 'string') {
+    cookieHeader = '';
+  }
+  const dataCookie = cookie.parse(cookieHeader);
   const userId = dataCookie.userId;
   if (userId) {
     const response = await getDataDevice({ userId });
