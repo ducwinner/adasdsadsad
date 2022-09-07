@@ -54,7 +54,7 @@ function Login() {
       window.location.href = `admin/dashboard`;
     }
     setMsgError(msg);
-  }, [msgName, msgPassword]);
+  }, [msgName, msgPassword, userName, password]);
 
   const onSubmit = () => {
     validateAll();
