@@ -1,0 +1,16 @@
+.Polaris-ChoiceList__ChoiceItem .Polaris-ChoiceList__ChoiceChildren {
+    padding-left: 0;
+
+}
+
+.specific-products .Polaris-Card {
+    margin: 10px 0;
+}
+
+.Polaris-DisplayText.Polaris-DisplayText--sizeSmall {
+    text-align: center;
+}
+
+.Polaris-ChoiceList__ChoiceItem {
+    margin: 15px;
+}

@@ -1,0 +1,17 @@
+.specific-products .Polaris-Card {
+    margin: 10px 0;
+}
+
+.specific-products .Polaris-ResourceItem__Container {
+    background-color: #f4f5fe;
+}
+
+.specific-products .resourceItem {
+    position: relative;
+}
+
+.specific-products .resourceItem .Polaris-Icon {
+    position: absolute;
+    top: 15%;
+    right: 15px;
+}
