@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import React from 'react';
 import {
   TextField,
@@ -36,13 +36,17 @@ function SpecificProducts() {
 
     setLstSearchProduct(lstProducts);
   }, []);
+
+  const listItemSelected = useMemo(() => productAll.filter((product) => selectedItems.includes(product.id)),[]);
+
+  
   return (
     <div className="specific-products">
       <TextField onFocus={onToggleModalClick} autoComplete="off" />
       <Card>
         <ResourceList
           resourceName={{ singular: 'customer', plural: 'customers' }}
-          items={() => productAll.filter((product) => selectedItems.includes(product.id))}
+          items={listItemSelected}
           renderItem={(item) => {
             const { id, url, avatarSource, name, location } = item;
 
