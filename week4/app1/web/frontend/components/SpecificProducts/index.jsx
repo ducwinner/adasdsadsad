@@ -38,7 +38,7 @@ function SpecificProducts() {
   const handleSearchChange = useCallback((value) => {
     setValueSearch(value);
     const lstProducts = productAll.filter((product) =>
-      product.name.toUpperCase().includes(value.toUpperCase())
+      product.title.toUpperCase().includes(value.toUpperCase())
     );
 
     setLstSearchProduct(lstProducts);
@@ -63,21 +63,20 @@ function SpecificProducts() {
           resourceName={{ singular: 'customer', plural: 'customers' }}
           items={lstSelectedProducts}
           renderItem={(item) => {
-            const { id, url, avatarSource, name, location } = item;
+            const { id, title, images } = item;
 
             return (
               <ResourceItem
                 key={id}
                 id={id}
-                url={url}
                 media={
-                  <Avatar customer size="Large" name={name} source={avatarSource} shape="square" />
+                  <Avatar customer size="Large" name={title} source={images} shape="square" />
                 }
-                accessibilityLabel={`View details for ${name}`}
-                name={name}
+                accessibilityLabel={`View details for ${title}`}
+                name={title}
               >
                 <div className="resourceItem">
-                  <div style={{ lineHeight: '60px' }}>{location}</div>
+                  <div style={{ lineHeight: '60px' }}>{title}</div>
                   <div onClick={() => removeItem(id)} className='icon'><Icon source={MobileCancelMajor} color="base" /></div>
                 </div>
               </ResourceItem>
@@ -112,26 +111,25 @@ function SpecificProducts() {
                 onSelectionChange={setSelectedItems}
                 selectable
                 renderItem={(item) => {
-                  const { id, url, avatarSource, name } = item;
+                  const { id, title, images } = item;
 
                   return (
                     <ResourceItem
                       key={id}
                       id={id}
-                      url={url}
                       media={
                         <Avatar
                           customer
                           size="Large"
-                          name={name}
-                          source={avatarSource}
+                          name={title}
+                          source={images}
                           shape="square"
                         />
                       }
-                      accessibilityLabel={`View details for ${name}`}
-                      name={name}
+                      accessibilityLabel={`View details for ${title}`}
+                      name={title}
                     >
-                      <div style={{ lineHeight: '60px' }}>{name}</div>
+                      <div style={{ lineHeight: '60px' }}>{title}</div>
                     </ResourceItem>
                   );
                 }}

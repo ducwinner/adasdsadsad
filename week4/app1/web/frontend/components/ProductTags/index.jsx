@@ -14,7 +14,7 @@ import {
 } from '@shopify/polaris';
 import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
-import collectionAll from '../../data/collectionAll';
+import productTags from '../../data/productTags';
 
 
 function ProductTags() {
@@ -22,22 +22,22 @@ function ProductTags() {
 
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [options, setOptions] = useState(collectionAll);
+  const [options, setOptions] = useState(productTags);
 
   const updateText = useCallback(
     (value) => {
       setInputValue(value);
 
       if (value === '') {
-        setOptions(collectionAll);
+        setOptions(productTags);
         return;
       }
 
       const filterRegex = new RegExp(value, 'i');
-      const resultOptions = collectionAll.filter((option) => option.name.match(filterRegex));
+      const resultOptions = productTags.filter((option) => option.match(filterRegex));
       setOptions(resultOptions);
     },
-    [collectionAll]
+    [productTags]
   );
 
   const updateSelection = useCallback(
@@ -49,7 +49,7 @@ function ProductTags() {
       }
 
       const matchedOption = options.find((option) => {
-        return option.value.match(selected);
+        return option.match(selected);
       });
 
       updateText('');
@@ -66,24 +66,21 @@ function ProductTags() {
     [selectedOptions]
   );
 
+    // const lstCollectonSelected = useMemo(() => productTags.filter((tag) => selectedOptions.includes(tag)),[selectedOptions]);
 
-    const lstCollectonSelected = useMemo(() => collectionAll.filter((product) => selectedOptions.includes(product.value)),[selectedOptions]);
-
-    console.log(lstCollectonSelected)
 
   const optionsMarkup =
     options.length > 0
-      ? options.map((option) => {
-          const { name, value } = option;
+      ? options.map((option,index) => {
 
           return (
             <Listbox.Option
-              key={`${value}`}
-              value={value}
-              selected={selectedOptions.includes(value)}
-              accessibilityLabel={name}
+              key={index}
+              value={option}
+              selected={selectedOptions.includes(option)}
+              accessibilityLabel={option}
             >
-              {name}
+              {option}
             </Listbox.Option>
           );
         })
