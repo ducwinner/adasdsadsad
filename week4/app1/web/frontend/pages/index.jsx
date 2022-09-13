@@ -58,9 +58,11 @@ export default function HomePage() {
 
   const handleSelectChange = useCallback((value) => setSelectStatus(value), []);
 
+
   const handleSelectApplyChange = useCallback((value) => setSelectApply(value), []);
 
   const handleSelectCustomPrice = useCallback((value) => setSelectCustomPrice(value), []);
+
 
   return (
     <Page fullWidth>
@@ -129,15 +131,19 @@ export default function HomePage() {
           <Card sectioned title="Custom Price">
             <ChoiceList
               choices={[
-                { label: 'Apply a price to selected products', value: 'onePrice' },
+                {  label: 'Apply a price to selected products', value: 'onePrice'  },
                 {
+                  
                   label: 'Decrease a fixed amount of the original prices of the select products',
+                 
                   value: 'fixed',
                 },
                 {
+                  
                   label: 'Decrease the original prices of the select product bu percentage % ',
+                 
                   value: 'percent',
-                },
+                },,
               ]}
               selected={selectCustomPrice}
               onChange={handleSelectCustomPrice}
