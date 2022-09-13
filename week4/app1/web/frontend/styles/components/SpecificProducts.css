@@ -6,12 +6,20 @@
     background-color: #f4f5fe;
 }
 
-.specific-products .resourceItem {
+.resourceItem {
     position: relative;
 }
 
-.specific-products .resourceItem .Polaris-Icon {
+.resourceItem .icon {
     position: absolute;
     top: 15%;
     right: 15px;
+}
+
+.resourceItem .icon {
+    padding: 5px;
+}
+
+.resourceItem .icon:hover {
+    color: rgb(221, 61, 61);
 }

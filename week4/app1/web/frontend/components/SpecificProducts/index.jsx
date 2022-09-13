@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import React from 'react';
 import {
   TextField,
@@ -14,10 +14,13 @@ import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
 import productAll from '../../data/productAll';
 
+
+
 function SpecificProducts() {
   const [active, setActive] = useState(false);
   const [valueSearch, setValueSearch] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
+  const [lstSelectedProducts, setLstSelectedProducts] = useState([])
   const [lstSearchProduct, setLstSearchProduct] = useState(productAll);
 
   const onToggleModalClick = useCallback(() => {
@@ -26,7 +29,11 @@ function SpecificProducts() {
 
   const handleSelect = useCallback(() => {
     onToggleModalClick();
-  }, []);
+
+    const lstProduts = productAll.filter((product) => selectedItems.includes(product.id));
+
+    setLstSelectedProducts(lstProduts)
+  }, [selectedItems]);
 
   const handleSearchChange = useCallback((value) => {
     setValueSearch(value);
@@ -35,14 +42,26 @@ function SpecificProducts() {
     );
 
     setLstSearchProduct(lstProducts);
-  }, []);
+  }, [productAll]);
+
+  const removeItem = useCallback((id) => {
+    const options = [...selectedItems]
+      options.splice(options.indexOf(id),1)
+    
+    const lstProduts = productAll.filter((product) => options.includes(product.id));
+
+    setLstSelectedProducts(lstProduts)
+    setSelectedItems(options)
+  },[selectedItems])
+
+  
   return (
     <div className="specific-products">
       <TextField onFocus={onToggleModalClick} autoComplete="off" />
       <Card>
         <ResourceList
           resourceName={{ singular: 'customer', plural: 'customers' }}
-          items={() => productAll.filter((product) => selectedItems.includes(product.id))}
+          items={lstSelectedProducts}
           renderItem={(item) => {
             const { id, url, avatarSource, name, location } = item;
 
@@ -59,7 +78,7 @@ function SpecificProducts() {
               >
                 <div className="resourceItem">
                   <div style={{ lineHeight: '60px' }}>{location}</div>
-                  <Icon source={MobileCancelMajor} color="base" />
+                  <div onClick={() => removeItem(id)} className='icon'><Icon source={MobileCancelMajor} color="base" /></div>
                 </div>
               </ResourceItem>
             );
@@ -93,7 +112,7 @@ function SpecificProducts() {
                 onSelectionChange={setSelectedItems}
                 selectable
                 renderItem={(item) => {
-                  const { id, url, avatarSource, name, location } = item;
+                  const { id, url, avatarSource, name } = item;
 
                   return (
                     <ResourceItem
