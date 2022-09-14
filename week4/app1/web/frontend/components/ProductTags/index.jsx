@@ -15,14 +15,17 @@ import {
 import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
 import productTags from '../../data/productTags';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTags } from '../../redux/productTagSlice';
 
 
 function ProductTags() {
 
-
-  const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState(productTags);
+
+  const selectedOptions = useSelector(state => state.tags.data)
+  const dispatch = useDispatch()
 
   const updateText = useCallback(
     (value) => {
@@ -43,14 +46,10 @@ function ProductTags() {
   const updateSelection = useCallback(
     (selected) => {
       if (selectedOptions.includes(selected)) {
-        setSelectedOptions(selectedOptions.filter((option) => option !== selected));
+        dispatch(addTags(selectedOptions.filter((option) => option !== selected)));
       } else {
-        setSelectedOptions([...selectedOptions, selected]);
+        dispatch(addTags([...selectedOptions, selected]));
       }
-
-      const matchedOption = options.find((option) => {
-        return option.match(selected);
-      });
 
       updateText('');
     },
@@ -61,21 +60,19 @@ function ProductTags() {
     (tag) => () => {
       const options = [...selectedOptions];
       options.splice(options.indexOf(tag), 1);
-      setSelectedOptions(options);
+      dispatch(addTags(options));
     },
     [selectedOptions]
   );
 
-    // const lstCollectonSelected = useMemo(() => productTags.filter((tag) => selectedOptions.includes(tag)),[selectedOptions]);
-
 
   const optionsMarkup =
     options.length > 0
-      ? options.map((option,index) => {
+      ? options.map((option) => {
 
           return (
             <Listbox.Option
-              key={index}
+              key={`${option}`}
               value={option}
               selected={selectedOptions.includes(option)}
               accessibilityLabel={option}
@@ -103,7 +100,6 @@ function ProductTags() {
             label="Search tags"
             labelHidden
             value={inputValue}
-            placeholder="Search Products"
           />
         }
       >

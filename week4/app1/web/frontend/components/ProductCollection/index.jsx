@@ -12,12 +12,20 @@ import {
 import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
 import collectionAll from '../../data/collectionAll';
+import { useDispatch, useSelector } from 'react-redux';
+import { addCollection } from '../../redux/collectionSlice';
 
 function ProductCollection() {
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  //Hook
+  // const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState(collectionAll);
 
+  //Redux
+  const selectedOptions = useSelector(state => state.collections.data)
+  const dispatch = useDispatch()
+
+  
   const updateText = useCallback(
     (value) => {
       setInputValue(value);
@@ -37,9 +45,9 @@ function ProductCollection() {
   const updateSelection = useCallback(
     (selected) => {
       if (selectedOptions.includes(selected)) {
-        setSelectedOptions(selectedOptions.filter((option) => option !== selected));
+        dispatch(addCollection(selectedOptions.filter((option) => option !== selected)));
       } else {
-        setSelectedOptions([...selectedOptions, selected]);
+        dispatch(addCollection([...selectedOptions, selected]));
       }
 
       updateText('');
@@ -51,7 +59,7 @@ function ProductCollection() {
       console.log(1111)
       const options = [...selectedOptions];
       options.splice(options.indexOf(id), 1);
-      setSelectedOptions(options);
+      dispatch(addCollection(options));
     },[selectedOptions]);
 
   const lstCollectionSelected = useMemo(
@@ -89,7 +97,6 @@ function ProductCollection() {
             label="Search tags"
             labelHidden
             value={inputValue}
-            placeholder="Search"
           />
         }
       >

@@ -13,10 +13,64 @@ import {
 } from '@shopify/polaris';
 import React from 'react';
 import { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import ProductCollection from '../components/ProductCollection';
 import ProductTags from '../components/ProductTags';
 import SpecificProducts from '../components/SpecificProducts';
 import '../styles/home.css';
+
+// call api
+import axios from 'axios';
+const axiosProducts = axios.create({
+  baseURL: 'https://training-duc-nv.myshopify.com/admin/api/2022-07/graphql.json',
+  headers: {
+    'Content-type': 'aplication/json',
+    'X-Shopify-Access-Token': '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',
+  },
+  mode: "cors"
+});
+
+axiosProducts.interceptors.request.use(
+  function (config) {
+    // Do something before request is sent
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+axiosProducts.interceptors.response.use(
+  function (response) {
+    setTimeout(function () {}, 1000);
+    return response.data;
+  },
+  function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    return Promise.reject(error);
+  }
+);
+
+const callapi = async () => {
+  const a = await axiosProducts.post('/', {
+    query: `
+      {
+        shop {
+          name
+        }
+      }
+      `,
+    variables: {},
+  });
+  console.log('callapi', a);
+};
+
+callapi();
+
+
 
 export default function HomePage() {
   const [name, setName] = useState('');
@@ -27,6 +81,7 @@ export default function HomePage() {
   const [selectStatus, setSelectStatus] = useState('');
   const [selectApply, setSelectApply] = useState('');
   const [selectCustomPrice, setSelectCustomPrice] = useState('');
+
 
   const rows = [
     ['Emerald Silk Gown', '$875.00'],
@@ -50,25 +105,29 @@ export default function HomePage() {
   }, []);
 
   const handlePriceChange = useCallback((value) => {
+
+    console.log(value)
     if (value < 0) {
       value = Math.abs(value);
+    }
+    
+    if(value >100) {
+      setPriceErr(true)
     }
     setPrice(value);
   }, []);
 
   const handleSelectChange = useCallback((value) => setSelectStatus(value), []);
 
-
   const handleSelectApplyChange = useCallback((value) => setSelectApply(value), []);
 
   const handleSelectCustomPrice = useCallback((value) => setSelectCustomPrice(value), []);
-
 
   return (
     <Page fullWidth>
       <Layout>
         <Layout.Section>
-          <Heading>NEW PRICING RULE</Heading>
+          <Heading >NEW PRICING RULE</Heading>
           <Card sectioned title="General Information">
             <Form noValidate>
               <FormLayout>
@@ -131,19 +190,15 @@ export default function HomePage() {
           <Card sectioned title="Custom Price">
             <ChoiceList
               choices={[
-                {  label: 'Apply a price to selected products', value: 'onePrice'  },
+                { label: 'Apply a price to selected products', value: 'onePrice' },
                 {
-                  
                   label: 'Decrease a fixed amount of the original prices of the select products',
-                 
                   value: 'fixed',
                 },
                 {
-                  
                   label: 'Decrease the original prices of the select product bu percentage % ',
-                 
                   value: 'percent',
-                },,
+                },
               ]}
               selected={selectCustomPrice}
               onChange={handleSelectCustomPrice}

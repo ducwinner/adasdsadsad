@@ -1,3 +1,8 @@
+.Polaris-Layout__Section .Polaris-Heading {
+    margin: 20px 0;
+}
+
+
 .Polaris-ChoiceList__ChoiceItem .Polaris-ChoiceList__ChoiceChildren {
     padding-left: 0;
 
@@ -13,6 +18,19 @@
 
 .Polaris-ChoiceList__ChoiceItem {
     margin: 15px;
+}
+
+.pricing-detail-heading {
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: #fff;
+    background: linear-gradient(to right, #b92b27, #1565c0)
+}
+
+.Polaris-DataTable__Table thead th {
+    width: 80px;
 }
 
 .pricing-detail {

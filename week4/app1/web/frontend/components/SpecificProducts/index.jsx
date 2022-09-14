@@ -13,15 +13,26 @@ import {
 import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
 import productAll from '../../data/productAll';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { addProducts } from '../../redux/specificProductSlice';
+import { useEffect } from 'react';
 
 
 function SpecificProducts() {
   const [active, setActive] = useState(false);
   const [valueSearch, setValueSearch] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
-  const [lstSelectedProducts, setLstSelectedProducts] = useState([])
   const [lstSearchProduct, setLstSearchProduct] = useState(productAll);
+  const lstSelectedProducts = useSelector((state) => state.specificProduct.data);
+  const dispatch = useDispatch();
+
+  console.log(selectedItems);
+  console.log(lstSelectedProducts);
+  useEffect(() => {
+    const selected = lstSelectedProducts.map((e) => e.id);
+
+    setSelectedItems(selected);
+  }, []);
 
   const onToggleModalClick = useCallback(() => {
     setActive((prev) => !prev);
@@ -32,32 +43,41 @@ function SpecificProducts() {
 
     const lstProduts = productAll.filter((product) => selectedItems.includes(product.id));
 
-    setLstSelectedProducts(lstProduts)
+    dispatch(addProducts(lstProduts));
   }, [selectedItems]);
 
-  const handleSearchChange = useCallback((value) => {
-    setValueSearch(value);
-    const lstProducts = productAll.filter((product) =>
-      product.title.toUpperCase().includes(value.toUpperCase())
-    );
+  const handleSearchChange = useCallback(
+    (value) => {
+      setValueSearch(value);
+      const lstProducts = productAll.filter((product) =>
+        product.title.toUpperCase().includes(value.toUpperCase())
+      );
 
-    setLstSearchProduct(lstProducts);
-  }, [productAll]);
+      setLstSearchProduct(lstProducts);
+    },
+    [productAll]
+  );
 
-  const removeItem = useCallback((id) => {
-    const options = [...selectedItems]
-      options.splice(options.indexOf(id),1)
-    
-    const lstProduts = productAll.filter((product) => options.includes(product.id));
+  const removeItem = useCallback(
+    (id) => {
+      const options = [...selectedItems];
+      options.splice(options.indexOf(id), 1);
 
-    setLstSelectedProducts(lstProduts)
-    setSelectedItems(options)
-  },[selectedItems])
+      const lstProduts = productAll.filter((product) => options.includes(product.id));
 
-  
+      dispatch(addProducts(lstProduts));
+      setSelectedItems(options);
+    },
+    [selectedItems]
+  );
+
   return (
     <div className="specific-products">
-      <TextField onFocus={onToggleModalClick} autoComplete="off" />
+      <TextField
+        prefix={<Icon source={SearchMinor} />}
+        onFocus={onToggleModalClick}
+        autoComplete="off"
+      />
       <Card>
         <ResourceList
           resourceName={{ singular: 'customer', plural: 'customers' }}
@@ -69,15 +89,15 @@ function SpecificProducts() {
               <ResourceItem
                 key={id}
                 id={id}
-                media={
-                  <Avatar customer size="Large" name={title} source={images} shape="square" />
-                }
+                media={<Avatar customer size="Large" name={title} source={images} shape="square" />}
                 accessibilityLabel={`View details for ${title}`}
                 name={title}
               >
                 <div className="resourceItem">
                   <div style={{ lineHeight: '60px' }}>{title}</div>
-                  <div onClick={() => removeItem(id)} className='icon'><Icon source={MobileCancelMajor} color="base" /></div>
+                  <div onClick={() => removeItem(id)} className="icon">
+                    <Icon source={MobileCancelMajor} color="base" />
+                  </div>
                 </div>
               </ResourceItem>
             );
@@ -97,10 +117,9 @@ function SpecificProducts() {
           <TextContainer>
             <TextField
               prefix={<Icon source={SearchMinor} />}
-              label="Search tags"
+              label="Search"
               labelHidden
               value={valueSearch}
-              placeholder="Search tags"
               onChange={handleSearchChange}
             />
             <Card>
@@ -118,13 +137,7 @@ function SpecificProducts() {
                       key={id}
                       id={id}
                       media={
-                        <Avatar
-                          customer
-                          size="Large"
-                          name={title}
-                          source={images}
-                          shape="square"
-                        />
+                        <Avatar customer size="Large" name={title} source={images} shape="square" />
                       }
                       accessibilityLabel={`View details for ${title}`}
                       name={title}

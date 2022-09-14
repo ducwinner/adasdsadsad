@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = [];
-
 const specificProductSlice = createSlice({
   name: 'lstSpecificProduct',
-  initialState,
+  initialState: {
+    data: [],
+  },
   reducers: {
-    addProducts(state, actions) {
-      state = actions.payload;
+    addProducts: (state, actions) => {
+      console.log(actions.payload);
+      state.data = actions.payload;
     },
     deleteProduct(state, actions) {
       state.splice(state.indexOf(actions));
