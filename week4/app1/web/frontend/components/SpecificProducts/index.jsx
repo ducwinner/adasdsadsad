@@ -18,30 +18,19 @@ import { addProducts } from '../../redux/specificProductSlice';
 import { useEffect } from 'react';
 
 
-function SpecificProducts() {
+function SpecificProducts({productAll}) {
   // Hook
-  const [productAll, setProductALL]= useState([])
   const [active, setActive] = useState(false);
   const [valueSearch, setValueSearch] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
-  const [lstSearchProduct, setLstSearchProduct] = useState([]);
+  const [lstSearchProduct, setLstSearchProduct] = useState(productAll);
 
   //Redux
   const lstSelectedProducts = useSelector((state) => state.specificProduct.data);
   const dispatch = useDispatch();
-
-  // call api: get all Products 
-  useEffect(() => {
-    const fetchProducts = async() => {
-      const productsAll = await getProductAll()
-      setProductALL(productsAll)
-      setLstSearchProduct(productsAll)
-    }
-    fetchProducts()
-  },[])
  
 
-    // set initialvalue SelectedItems: list đã select trước đó
+  // set initialvalue SelectedItems: list đã select trước đó
   useEffect(() => {
     const selected = lstSelectedProducts.map((e) => e.id);
     setSelectedItems(selected);

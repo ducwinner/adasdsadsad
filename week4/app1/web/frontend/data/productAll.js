@@ -55,12 +55,10 @@ export const getProductAll = async () => {
           id: e.node.id,
           title: e.node.title,
           images: '',
-          variants: e.node.variants.edges
+          variants: e.node.variants.edges,
         };
       }
     });
-
-    console.log(data);
 
     return data;
   } catch (error) {
@@ -70,7 +68,7 @@ export const getProductAll = async () => {
 
 export const getProductByTags = async (tags) => {
   let lstQuery = '';
-  rule.forEach((e, index) => {
+  tags.forEach((e, index) => {
     if (index == 0) {
       lstQuery += `(tag:'${e}') `;
     } else {
@@ -78,7 +76,7 @@ export const getProductByTags = async (tags) => {
     }
   });
   try {
-    const data = await axios.post(
+    const response = await axios.post(
       'https://training-duc-nv.myshopify.com/admin/api/2022-07/graphql.json',
       {
         query: `{
@@ -87,14 +85,7 @@ export const getProductByTags = async (tags) => {
                   node {
                     id
                     title
-                    images(first: 1) {
-                        edges {
-                          node {
-                            url
-                          }
-                        }
-                      }
-                      variants(first:2) {
+                    variants(first:2) {
                         edges {
                           node {
                             title
@@ -102,7 +93,7 @@ export const getProductByTags = async (tags) => {
                           }
                         }
                       }
-                  }
+                    }
               }
           }
       }`,
@@ -116,15 +107,37 @@ export const getProductByTags = async (tags) => {
       }
     );
 
-    return data.data.data;
+    //filter data to Array
+
+    const data = response.data.data.products.edges.map((e) => {
+      const amountVariant = e.node.variants.edges.length;
+      const variant1 = e.node.variants.edges[0].node;
+      const variant2 = e.node.variants.edges[amountVariant - 1].node;
+      if (amountVariant == 1) {
+        return {
+          id: e.node.id,
+          title: e.node.title,
+          variants: [variant1],
+        };
+      } else if (variant1.price !== variant2.price) {
+        return {
+          id: e.node.id,
+          title: e.node.title,
+          variants: [variant1, variant2],
+        };
+      }
+    });
+
+    return data;
   } catch (error) {
     console.log(error);
   }
 };
 
 export const getProductByCollections = async (id) => {
+  console.log('id', id);
   try {
-    const data = await axios.post(
+    const response = await axios.post(
       'https://training-duc-nv.myshopify.com/admin/api/2022-07/graphql.json',
       {
         query: `{
@@ -134,10 +147,11 @@ export const getProductByCollections = async (id) => {
                 node {
                   id
                   title
-                  variants(first: 3) {
+                  variants(first: 2) {
                     edges {
                       node {
                         price
+                        title
                       }
                     }
                   }
@@ -156,7 +170,30 @@ export const getProductByCollections = async (id) => {
       }
     );
 
-    return data.data.data;
+    //filter data to Array
+
+    const data = response.data.data.collection.products.edges.map((e) => {
+      const amountVariant = e.node.variants.edges.length;
+      const variant1 = e.node.variants.edges[0].node;
+      const variant2 = e.node.variants.edges[amountVariant - 1].node;
+      if (amountVariant == 1) {
+        return {
+          id: e.node.id,
+          title: e.node.title,
+          variants: [variant1],
+        };
+      } else if (variant1.price !== variant2.price) {
+        return {
+          id: e.node.id,
+          title: e.node.title,
+          variants: [variant1, variant2],
+        };
+      }
+    });
+
+    console.log(data);
+
+    return data;
   } catch (error) {
     console.log(error);
   }

@@ -15,9 +15,7 @@ import { addTags } from '../../redux/productTagSlice';
 import { getProductTags } from '../../data/productTag';
 
 
-function ProductTags({a}) {
-  a = 1
-  console.log('tags',a)
+function ProductTags() {
   //Hook
   const [productTags, setProductTags] = useState([])
   const [inputValue, setInputValue] = useState('');
@@ -27,6 +25,7 @@ function ProductTags({a}) {
   // Redux
   const selectedOptions = useSelector(state => state.tags.data)
   const dispatch = useDispatch()
+
 
   // call api: get Tags
   useEffect(() => {
