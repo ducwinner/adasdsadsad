@@ -12,25 +12,38 @@ import {
 } from '@shopify/polaris';
 import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
-import productAll from '../../data/productAll';
+import { getProductAll } from '../../data/productAll';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProducts } from '../../redux/specificProductSlice';
 import { useEffect } from 'react';
 
 
 function SpecificProducts() {
+  // Hook
+  const [productAll, setProductALL]= useState([])
   const [active, setActive] = useState(false);
   const [valueSearch, setValueSearch] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
-  const [lstSearchProduct, setLstSearchProduct] = useState(productAll);
+  const [lstSearchProduct, setLstSearchProduct] = useState([]);
+
+  //Redux
   const lstSelectedProducts = useSelector((state) => state.specificProduct.data);
   const dispatch = useDispatch();
 
-  console.log(selectedItems);
-  console.log(lstSelectedProducts);
+  // call api: get all Products 
+  useEffect(() => {
+    const fetchProducts = async() => {
+      const productsAll = await getProductAll()
+      setProductALL(productsAll)
+      setLstSearchProduct(productsAll)
+    }
+    fetchProducts()
+  },[])
+ 
+
+    // set initialvalue SelectedItems: list đã select trước đó
   useEffect(() => {
     const selected = lstSelectedProducts.map((e) => e.id);
-
     setSelectedItems(selected);
   }, []);
 

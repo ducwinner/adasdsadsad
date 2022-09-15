@@ -1,27 +1,163 @@
-const productAll = [
-  {
-    id: 'gid://shopify/Product/6943483199562',
-    images: '',
-    title: 'test',
-  },
-  {
-    id: 'gid://shopify/Product/6943504203850',
-    images:
-      'https://cdn.shopify.com/s/files/1/0565/6248/3274/products/1-26-15_Addis_Look_13_21899_0712_2048x2048_dab50f0b-f19c-470f-ae55-266062870e9c.jpg?v=1660638494',
-    title: 'a0 thun',
-  },
-  {
-    id: 'gid://shopify/Product/6943506071626',
-    images:
-      'https://cdn.shopify.com/s/files/1/0565/6248/3274/products/2015-05-13_Reshoot_Look5_16995_21792_2048x2048_269a1820-5529-44ba-b9dc-da621f648f94.jpg?v=1660638890',
-    title: 'giay tay 1',
-  },
-  {
-    id: 'gid://shopify/Product/69435042011',
-    images:
-      'https://cdn.shopify.com/s/files/1/0565/6248/3274/products/Marsell_6839_2048x2048_9964fdfd-f698-4849-aa85-60781fe65c90.jpg?v=1660638982',
-    title: 'giay tay 2',
-  },
-];
+import axios from 'axios';
 
-export default productAll;
+export const getProductAll = async () => {
+  try {
+    const response = await axios.post(
+      'https://training-duc-nv.myshopify.com/admin/api/2022-07/graphql.json',
+      {
+        query: `{
+        products(first: 20) {
+          edges {
+            node {
+              id
+              title
+              images(first: 1) {
+                edges {
+                  node {
+                    url
+                  }
+                }
+              }
+              variants(first:2) {
+                edges {
+                  node {
+                    title
+                    price
+                  }
+                }
+              }
+            }
+          }
+        }
+      }`,
+        variables: {},
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': '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',
+        },
+      }
+    );
+
+    //filter data to Array
+
+    const data = response.data.data.products.edges.map((e) => {
+      if (e.node.images.edges.length > 0) {
+        return {
+          id: e.node.id,
+          title: e.node.title,
+          images: e.node.images.edges[0].node.url,
+          variants: e.node.variants.edges,
+        };
+      } else {
+        return {
+          id: e.node.id,
+          title: e.node.title,
+          images: '',
+          variants: e.node.variants.edges
+        };
+      }
+    });
+
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProductByTags = async (tags) => {
+  let lstQuery = '';
+  rule.forEach((e, index) => {
+    if (index == 0) {
+      lstQuery += `(tag:'${e}') `;
+    } else {
+      lstQuery += `OR (tag:'${e}')`;
+    }
+  });
+  try {
+    const data = await axios.post(
+      'https://training-duc-nv.myshopify.com/admin/api/2022-07/graphql.json',
+      {
+        query: `{
+          products(first: 10, query: "${lstQuery}") {
+                edges {
+                  node {
+                    id
+                    title
+                    images(first: 1) {
+                        edges {
+                          node {
+                            url
+                          }
+                        }
+                      }
+                      variants(first:2) {
+                        edges {
+                          node {
+                            title
+                            price
+                          }
+                        }
+                      }
+                  }
+              }
+          }
+      }`,
+        variables: {},
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': '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',
+        },
+      }
+    );
+
+    return data.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProductByCollections = async (id) => {
+  try {
+    const data = await axios.post(
+      'https://training-duc-nv.myshopify.com/admin/api/2022-07/graphql.json',
+      {
+        query: `{
+          collection(id:"${id}") {
+             products(first:10) {
+              edges {
+                node {
+                  id
+                  title
+                  variants(first: 3) {
+                    edges {
+                      node {
+                        price
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          } 
+      }`,
+        variables: {},
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': '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',
+        },
+      }
+    );
+
+    return data.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -1,10 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback,useEffect } from 'react';
 import React from 'react';
 import {
-  Card,
-  Avatar,
-  ResourceList,
-  ResourceItem,
   Tag,
   Listbox,
   Combobox,
@@ -12,20 +8,35 @@ import {
   TextContainer,
   Stack,
 } from '@shopify/polaris';
-import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
+import { SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
-import productTags from '../../data/productTags';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTags } from '../../redux/productTagSlice';
+import { getProductTags } from '../../data/productTag';
 
 
-function ProductTags() {
-
+function ProductTags({a}) {
+  a = 1
+  console.log('tags',a)
+  //Hook
+  const [productTags, setProductTags] = useState([])
   const [inputValue, setInputValue] = useState('');
-  const [options, setOptions] = useState(productTags);
+  const [options, setOptions] = useState([]);
 
+
+  // Redux
   const selectedOptions = useSelector(state => state.tags.data)
   const dispatch = useDispatch()
+
+  // call api: get Tags
+  useEffect(() => {
+    const fetchTags = async() => {
+      const productTags = await getProductTags()
+      setProductTags(productTags)
+      setOptions(productTags)
+    }
+    fetchTags()
+  },[])
 
   const updateText = useCallback(
     (value) => {

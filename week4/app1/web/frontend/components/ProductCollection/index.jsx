@@ -11,19 +11,32 @@ import {
 } from '@shopify/polaris';
 import { MobileCancelMajor, SearchMinor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
-import collectionAll from '../../data/collectionAll';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCollection } from '../../redux/collectionSlice';
+import { useEffect } from 'react';
+import { getCollections } from '../../data/productCollection';
 
 function ProductCollection() {
   //Hook
   // const [selectedOptions, setSelectedOptions] = useState([]);
+  const [collectionAll,setCollectionAll] = useState([])
   const [inputValue, setInputValue] = useState('');
-  const [options, setOptions] = useState(collectionAll);
+  const [options, setOptions] = useState([]);
 
   //Redux
   const selectedOptions = useSelector(state => state.collections.data)
   const dispatch = useDispatch()
+
+  // call api: get Collections
+  useEffect(() => {
+    const fetchCollections = async() => {
+      const collections = await getCollections()
+      setCollectionAll(collections)
+      setOptions(collections)
+    }
+    fetchCollections()
+  },[])
+
 
   
   const updateText = useCallback(
