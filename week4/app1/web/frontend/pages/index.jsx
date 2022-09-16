@@ -10,7 +10,6 @@ import {
   ChoiceList,
   DataTable,
   TextStyle,
-  Button,
 } from '@shopify/polaris';
 // import {getProductAll} from "../api/productALL.js"
 import React from 'react';
@@ -26,68 +25,46 @@ import '../styles/home.css';
 
 export default function HomePage() {
   //hook
-  const [productAll, setProductALL]= useState([])
+  const [productAll, setProductALL] = useState([]);
   const [name, setName] = useState('');
   const [priority, setPriority] = useState('');
   const [priorityErr, setPriorityErr] = useState(false);
-  const [price, setPrice] = useState('');
+  const [rulePriceValue, setRulePriceValue] = useState('');
   const [priceErr, setPriceErr] = useState(false);
   const [selectStatus, setSelectStatus] = useState('');
   const [selectApply, setSelectApply] = useState('');
   const [selectCustomPrice, setSelectCustomPrice] = useState('');
-  const [productApply, setProductApply] = useState([])
-  const [rows, setRows] = useState([
-    ['Emerald Silk Gown', '$875.00'],
-    ['Mauve Cashmere Scarf', '$230.00'],
-    ['Navy Merino Wool', '$445.00'],
-  ])
+  const [isOkSave, setIsOKSave] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [isProductsApply, setIsProductsApply] = useState(false)
 
-  //redux 
-  const productsSpecific = useSelector(state => state.specificProduct.data)
-  const tagsQuery = useSelector(state => state.tags.data)
-  const collectionsQuery = useSelector(state => state.collections.data)
+  //redux
+  const productsSpecific = useSelector((state) => state.specificProduct.data);
+  const tagsQuery = useSelector((state) => state.tags.data);
+  const collectionsQuery = useSelector((state) => state.collections.data);
 
-  
+  // call api: get all Products
   useEffect(() => {
-    // const fetchProducts = async() => {
-    //   console.log(collectionsQuery)
-    //   const productsAll = await getProductByCollections(collectionsQuery[0])
-    //   console.log('productsAll',productsAll)
-    // }
-    // fetchProducts()
+    const fetchProducts = async () => {
+      const productsAll = await getProductAll();
+      setProductALL(productsAll);
+    };
+    fetchProducts();
+  }, []);
 
-    const fetchProducts = async() => {
-      const productApply = await getProductByTags(tagsQuery)
-
-      console.log(productApply)
-      // let rows = []
-      // productApply.forEach(e => {
-      //   if(e.variants.length == 1) {
-      //     rows.push([`${e.title} + ( all variant )`,e.variants[0].price])
-      //   } else {
-      //     rows.push([`${e.title} + ( ${e.variants[0].title})`,e.variants[0].price])
-      //     rows.push([`${e.title} + ( ${e.variants[1].title})`,e.variants[1].price])
-      //   }
-      // })
-      // console.log(rows)
-      // setRows(rows)
-    } 
-
-    fetchProducts()
-  },[])
-
-  // call api: get all Products 
+  // Validate all require
   useEffect(() => {
-    const fetchProducts = async() => {
-      const productsAll = await getProductAll()
-      setProductALL(productsAll)
+    if (name && priority && !priorityErr && rulePriceValue && !priceErr && selectApply && selectCustomPrice) {
+      setIsOKSave(true);
+    } else {
+      setIsOKSave(false);
     }
-    fetchProducts()
-  },[])
+  }, [name, priority, priorityErr, rulePriceValue, priceErr, selectApply,selectCustomPrice]);
 
   const handleNameChange = useCallback((value) => setName(value), []);
 
   const handlePriorityChange = useCallback((value) => {
+    // check integer
     const regex = /(?<=\s|^)\d+(?=\s|$)/;
 
     if (value < 0 || value > 99 || !regex.test(value)) {
@@ -95,12 +72,10 @@ export default function HomePage() {
     } else {
       setPriorityErr(false);
     }
-
     setPriority(value);
   }, []);
 
-  const handlePriceChange = useCallback((value) => {
-    console.log(value);
+  const handlevRulePriceChange = useCallback((value) => {
     if (value < 0) {
       value = Math.abs(value);
     }
@@ -108,7 +83,7 @@ export default function HomePage() {
     if (value > 100) {
       setPriceErr(true);
     }
-    setPrice(value);
+    setRulePriceValue(value);
   }, []);
 
   const handleSelectChange = useCallback((value) => setSelectStatus(value), []);
@@ -117,38 +92,120 @@ export default function HomePage() {
 
   const handleSelectCustomPrice = useCallback((value) => setSelectCustomPrice(value), []);
 
-  const handleAddPricingRule = useCallback(() => {
-   let productApply = []
-    // const getProductsWithRule = async () => {
-    //   if(selectApply == 'specific') {
-    //     productApply = productsSpecific
-    //   } else if(selectApply == 'tags') {
-    //     productApply = await getProductByTags(tagsQuery)
-    //   } else if( selectApply == 'collection') {
-    //     productApply = await getProductByCollections(collectionsQuery)
-    //   } else {
-    //     productApply = productAll
-    //   }
-    //   setProductApply(productApply)
-    //  }
-    //  getProductsWithRule()
-    let rows = []
+  const callProductsByRule = useCallback(async () => {
+    let productApply = [];
+    if (selectApply == 'specific') {
+      productApply = productsSpecific;
+    } else if (selectApply == 'tags') {
+      productApply = await getProductByTags(tagsQuery);
+    } else if (selectApply == 'collection') {
+      productApply = await getProductByCollections(collectionsQuery);
+    } else {
+      productApply = productAll;
+    }
+    return productApply;
+  }, [selectApply, productsSpecific, tagsQuery, collectionsQuery, productAll]);
 
-    productApply.forEach(e => {
-      if(e.variants.length == 1) {
-        rows.push([`${e.title} + ( all variant )`,e.variants[0].price])
-      } else {
-        rows.push([`${e.title} + ( ${e.variants[0].title})`,e.variants[0].price])
-        rows.push([`${e.title} + ( ${e.variants[1].title})`,e.variants[1].price])
+  const handlePriceByRule = useCallback(
+    (data) => {
+      console.log(rulePriceValue);
+      const productsAfterApply = data.map((e) => {
+        const titleProduct = e.title;
+        // change all prices with one price
+        if (selectCustomPrice == 'onePrice') {
+          const variants = e.variants.map((e) => {
+            const title = e.title;
+            const currentPrice = +e.price;
+            if (currentPrice < +rulePriceValue) {
+              return {
+                title,
+                price: currentPrice,
+              };
+            } else {
+              return {
+                title,
+                price: +rulePriceValue,
+              };
+            }
+          });
+          return {
+            title: titleProduct,
+            variants,
+          };
+
+          // change prices with a fixed amount
+        } else if (selectCustomPrice == 'fixed') {
+          const variants = e.variants.map((e) => {
+            const title = e.title;
+            const currentPrice = +e.price;
+            if (currentPrice < +rulePriceValue) {
+              return {
+                title,
+                price: currentPrice,
+              };
+            } else {
+              return {
+                title,
+                price: currentPrice - +rulePriceValue,
+              };
+            }
+          });
+          return {
+            title: titleProduct,
+            variants,
+          };
+
+          // change price by percentage %
+        } else {
+          const variants = e.variants.map((e) => {
+            const title = e.title;
+            const currentPrice = +e.price;
+            const price = currentPrice - (currentPrice * +rulePriceValue) / 100;
+            return {
+              title,
+              price,
+            };
+          });
+          return {
+            title: titleProduct,
+            variants,
+          };
+        }
+      });
+
+      return productsAfterApply;
+    },
+    [rulePriceValue, selectCustomPrice]
+  );
+
+  const handleAddPricingRule = useCallback(async () => {
+    const data = await callProductsByRule();
+    const dataAfterApplyRule = handlePriceByRule(data);
+
+
+    // data Table
+    let rows = [];
+    dataAfterApplyRule.forEach((e, index) => {
+      if (index < 10) {
+        if (e.variants.length == 1) {
+          rows.push([`${e.title} ( all variant )`, `${e.variants[0].price} $`]);
+        } else {
+          rows.push([`${e.title} ( ${e.variants[0].title})`, `${e.variants[0].price} $`]);
+          rows.push([`${e.title} ( ${e.variants[1].title})`, `${e.variants[0].price} $`]);
+        }
       }
-    })
-     
-  },[tagsQuery,collectionsQuery,selectApply,productsSpecific])
+    });
+    setRows(rows);
+  }, [selectApply, productsSpecific, tagsQuery, collectionsQuery, productAll, rulePriceValue, selectCustomPrice]);
   return (
     <Page fullWidth>
       <Layout>
         <Layout.Section>
-          <div className='header-footer'><Button primary onClick={handleAddPricingRule}>Save</Button></div>
+          <div className="header-footer">
+            <button className={isOkSave ? 'button-save' : 'hide'} onClick={handleAddPricingRule}>
+              Save
+            </button>
+          </div>
         </Layout.Section>
         <Layout.Section>
           <Layout>
@@ -157,13 +214,7 @@ export default function HomePage() {
               <Card sectioned title="General Information">
                 <Form noValidate>
                   <FormLayout>
-                    <TextField
-                      value={name}
-                      onChange={handleNameChange}
-                      label="Name"
-                      type="text"
-                      autoComplete="off"
-                    />
+                    <TextField value={name} onChange={handleNameChange} label="Name" type="text" autoComplete="off" />
                     <TextField
                       value={priority}
                       onChange={handlePriorityChange}
@@ -201,12 +252,12 @@ export default function HomePage() {
                     {
                       label: 'Product collection',
                       value: 'collection',
-                      renderChildren: () => selectApply == 'collection' && <ProductCollection/>,
+                      renderChildren: () => selectApply == 'collection' && <ProductCollection />,
                     },
                     {
                       label: 'Product tags',
                       value: 'tags',
-                      renderChildren: () => selectApply == 'tags' && <ProductTags/>,
+                      renderChildren: () => selectApply == 'tags' && <ProductTags />,
                     },
                   ]}
                   selected={selectApply}
@@ -218,12 +269,11 @@ export default function HomePage() {
                   choices={[
                     { label: 'Apply a price to selected products', value: 'onePrice' },
                     {
-                      label:
-                        'Decrease a fixed amount of the original prices of the select products',
+                      label: 'Decrease a fixed amount of the original prices of the select products',
                       value: 'fixed',
                     },
                     {
-                      label: 'Decrease the original prices of the select product bu percentage % ',
+                      label: 'Decrease the original prices of the select product by percentage % ',
                       value: 'percent',
                     },
                   ]}
@@ -232,20 +282,16 @@ export default function HomePage() {
                 />
                 <TextField
                   suffix={selectCustomPrice == 'percent' && <div>%</div>}
-                  value={price}
-                  onChange={handlePriceChange}
+                  value={rulePriceValue}
+                  onChange={handlevRulePriceChange}
                   label="Amount"
                   type="number"
                   autoComplete="off"
-                  prefix={
-                    !(selectCustomPrice == 'percent') && (
-                      <div style={{ textDecoration: 'underline' }}>đ</div>
-                    )
-                  }
+                  prefix={!(selectCustomPrice == 'percent') && <div style={{ textDecoration: 'underline' }}>đ</div>}
                   helpText={
                     priceErr && (
                       <TextStyle variation="warning">
-                        {selectCustomPrice == 'percent' && price > 100
+                        {selectCustomPrice == 'percent' && rulePriceValue > 100
                           ? 'Please enter number from 0 to 99'
                           : ''}
                       </TextStyle>
@@ -257,17 +303,17 @@ export default function HomePage() {
             <Layout.Section secondary>
               <div className="pricing-detail">
                 <div className="pricing-detail-heading">Show product pricing detail</div>
-                <DataTable
-                  columnContentTypes={['text', 'text']}
-                  headings={['Title', 'Modified price']}
-                  rows={rows}
-                />
+                <DataTable columnContentTypes={['text', 'text']} headings={['Title', 'Modified price']} rows={rows} />
               </div>
             </Layout.Section>
           </Layout>
         </Layout.Section>
         <Layout.Section>
-          <div className='header-footer'><Button primary>Save</Button></div>
+          <div className="header-footer">
+            <button className={isOkSave ? 'button-save' : 'hide'} onClick={handleAddPricingRule}>
+              Save
+            </button>
+          </div>
         </Layout.Section>
       </Layout>
     </Page>

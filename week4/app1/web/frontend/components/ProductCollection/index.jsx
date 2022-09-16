@@ -22,7 +22,6 @@ function ProductCollection() {
   const [collectionAll,setCollectionAll] = useState([])
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState([]);
-
   //Redux
   const selectedOptions = useSelector(state => state.collections.data)
   const dispatch = useDispatch()
@@ -37,8 +36,6 @@ function ProductCollection() {
     fetchCollections()
   },[])
 
-
-  
   const updateText = useCallback(
     (value) => {
       setInputValue(value);
@@ -69,12 +66,13 @@ function ProductCollection() {
   );
 
   const removeItem = useCallback((id) => {
-      console.log(1111)
       const options = [...selectedOptions];
       options.splice(options.indexOf(id), 1);
       dispatch(addCollection(options));
     },[selectedOptions]);
 
+
+  // list collection đã select render view
   const lstCollectionSelected = useMemo(
     () => collectionAll.filter((product) => selectedOptions.includes(product.id)),
     [selectedOptions]

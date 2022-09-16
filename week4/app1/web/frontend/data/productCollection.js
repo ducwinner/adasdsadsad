@@ -31,18 +31,20 @@ export const getCollections = async () => {
     );
 
     //filter data to Array
-
     const data = response.data.data.shop.collections.edges.map((e) => {
+      const id = e.node.id;
+      const title = e.node.title;
+
       if (e.node.images) {
         return {
-          id: e.node.id,
-          title: e.node.title,
+          id,
+          title,
           images: e.node.images.edges[0].node.url,
         };
       } else {
         return {
-          id: e.node.id,
-          title: e.node.title,
+          id,
+          title,
           images: '',
         };
       }
