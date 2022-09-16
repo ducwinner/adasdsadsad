@@ -55,12 +55,6 @@
     margin: 50px 0 10px 0;
 }
 
-.Polaris-Button.Polaris-Button--primary {
-    position: absolute;
-    top: 0;
-    right: 100px;
-}
-
 .button-save {
     position: absolute;
     background-color: #008060;
