@@ -126,6 +126,7 @@ export default function HomePage() {
     setSelectCustomPrice(value);
   }, [rulePriceValue,inputDiscount]);
 
+
   const handlePriorityChange = useCallback((value) => {
     // check integer
     const regex = /(?<=\s|^)\d+(?=\s|$)/;
@@ -198,7 +199,6 @@ export default function HomePage() {
         productApply = colectionsMatch.map((e) => e.products).flat();
         break;
       default:
-
         productApply = productAll;
     }
     return productApply;
