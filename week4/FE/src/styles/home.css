@@ -97,19 +97,16 @@
 }
 
 .Polaris-DataTable__Table tbody tr th {
+  min-width: 200px;
+}
+
+.Polaris-DataTable__Table tbody tr th,
+.Polaris-DataTable__Table tbody tr th {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .Polaris-DataTable__Table tbody tr td:last-child {
   text-align: right;
 }
-/* 
-.isOkeAdd {
-    cursor: pointer;
-    background-color: #008060;
-    color: #fff;
-    border: none
-}
 
-.isOkeAdd:hover {
-    background-color: #035a44;
-} */

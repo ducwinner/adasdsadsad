@@ -31,6 +31,7 @@ export default function HomePage() {
   const [collectionAll, setCollectionAll] = useState([]);
   const [tags, setTags] = useState([]);
   const [name, setName] = useState('');
+  const [nameErr, setNameErr] = useState(false);
   const [priority, setPriority] = useState('');
   const [priorityErr, setPriorityErr] = useState(false);
   const [rulePriceValue, setRulePriceValue] = useState('');
@@ -53,16 +54,6 @@ export default function HomePage() {
     },
   });
 
-  const getProductsByTags = useCallback(async () => {
-    try {
-      const data = await axios.post('http://localhost:8888/api/getProductsByTags', { tags: tagsQuery });
-      const result = customProductsByTags(data);
-      return result;
-    } catch (error) {
-      console.log(error);
-    }
-  }, [tagsQuery]);
-
   const {} = useQuery(queryCollections, {
     onCompleted(data) {
       const result = customCollections(data);
@@ -79,6 +70,17 @@ export default function HomePage() {
     },
   });
 
+  // call product by tags
+  const getProductsByTags = useCallback(async () => {
+    try {
+      const data = await axios.post('http://localhost:8888/api/getProductsByTags', { tags: tagsQuery });
+      const result = customProductsByTags(data);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }, [tagsQuery]);
+
   // Validate all require
   useEffect(() => {
     if (name && priority && !priorityErr && rulePriceValue && !priceErr && selectApply && selectCustomPrice) {
@@ -88,18 +90,32 @@ export default function HomePage() {
     }
   }, [name, priority, priorityErr, rulePriceValue, priceErr, selectApply, selectCustomPrice]);
 
-  const handleNameChange = useCallback((value) => setName(value), []);
+  const handleNameChange = useCallback((value) => {
+    !value ? setNameErr(true) : setNameErr(false);
+
+    setName(value);
+  }, []);
 
   const handleSelectChange = useCallback((value) => setSelectStatus(value), []);
 
   const handleSelectApplyChange = useCallback((value) => setSelectApply(value), []);
 
-  const handleSelectCustomPrice = useCallback((value) => setSelectCustomPrice(value), []);
+  const handleSelectCustomPrice = useCallback((value) => {
+    if (value == 'percent')  {
+      if(rulePriceValue > 100) {
+        setPriceErr(true);
+      } else {
+        setPriceErr(false);
+      }
+    } else {
+      setPriceErr(false);
+    }
+    setSelectCustomPrice(value);
+  }, []);
 
   const handlePriorityChange = useCallback((value) => {
     // check integer
     const regex = /(?<=\s|^)\d+(?=\s|$)/;
-
     // validata rule = percent
     if (value < 0 || value > 99 || !regex.test(value)) {
       setPriorityErr(true);
@@ -109,42 +125,50 @@ export default function HomePage() {
     setPriority(value);
   }, []);
 
+  const handlevRulePriceChange = useCallback(
+    (value) => {
+      if (value < 0) {
+        setPriceErr(false);
+        value = Math.abs(value);
+      }
 
-  const handlevRulePriceChange = useCallback((value) => {
-    if (value < 0) {
-      setPriceErr(false);
-      value = Math.abs(value);
-    }
+      if (value > 100 && selectCustomPrice == 'percent') {
+        setPriceErr(true);
+      } else {
+        setPriceErr(false);
+      }
 
-    if (value > 100 && selectCustomPrice == 'percent') {
-      setPriceErr(true);
-    } else {
-      setPriceErr(false);
-    }
-
-    setRulePriceValue(value);
-  }, [selectCustomPrice]);
-
+      setRulePriceValue(value);
+    },
+    [selectCustomPrice]
+  );
 
   // Call products with Rule
   const getProductsByRule = useCallback(async () => {
     let productApply = [];
-    switch (selectApply) {
+    switch (selectApply[0]) {
       case 'specific':
+        console.log('specific');
         productApply = productsSpecific;
         break;
       case 'tags':
         productApply = await getProductsByTags();
+        console.log('tags');
+
         break;
       case 'collection':
         const colectionsMatch = collectionAll.filter((e) => collectionsQuery.includes(e.id));
+        console.log('collection');
+
         productApply = colectionsMatch.map((e) => e.products).flat();
         break;
       default:
+        console.log('all');
+
         productApply = productAll;
     }
     return productApply;
-  },[selectApply,productsSpecific,collectionsQuery]);
+  }, [selectApply, productsSpecific, collectionsQuery, productAll]);
 
   const handlePriceByRule = useCallback(
     (data) => {
@@ -218,7 +242,9 @@ export default function HomePage() {
       });
 
       return productsAfterApply;
-    },[rulePriceValue, selectCustomPrice]);
+    },
+    [rulePriceValue, selectCustomPrice]
+  );
 
   const handleAddPricingRule = useCallback(async () => {
     const data = await getProductsByRule();
@@ -230,16 +256,16 @@ export default function HomePage() {
       // limit 10 row
       let productName = '';
       if (e.variants.length == 1) {
-        productName = `${e.title} ( all variant )`;
+        productName = `${e.title} (all variant)`;
       } else {
-        productName = `${e.title} ( ${e.variants[0].title} )`;
+        productName = `${e.title} (${e.variants[0].title})`;
       }
       if (index < 10) {
         rows.push([productName, `${e.variants[0].currentPrice} $`, `${e.variants[0].lastPrice} $`]);
       }
     });
     setRows(rows);
-  },[rulePriceValue, selectCustomPrice,selectApply,productsSpecific,collectionsQuery]);
+  });
 
   return (
     <Page fullWidth>
@@ -258,7 +284,14 @@ export default function HomePage() {
               <Card sectioned title="General Information">
                 <Form noValidate>
                   <FormLayout>
-                    <TextField value={name} onChange={handleNameChange} label="Name" type="text" autoComplete="off" />
+                    <TextField
+                      value={name}
+                      onChange={handleNameChange}
+                      label="Name"
+                      type="text"
+                      autoComplete="off"
+                      helpText={nameErr && <TextStyle variation="warning">Enter this field</TextStyle>}
+                    />
                     <TextField
                       value={priority}
                       onChange={handlePriorityChange}
@@ -291,18 +324,19 @@ export default function HomePage() {
                     {
                       label: 'Specific product',
                       value: 'specific',
-                      renderChildren: () => selectApply == 'specific' && <SpecificProducts productAll={productAll} />,
+                      renderChildren: () =>
+                        selectApply[0] == 'specific' && <SpecificProducts productAll={productAll} />,
                     },
                     {
                       label: 'Product collection',
                       value: 'collection',
                       renderChildren: () =>
-                        selectApply == 'collection' && <ProductCollection collecionAll={collectionAll} />,
+                        selectApply[0] == 'collection' && <ProductCollection collecionAll={collectionAll} />,
                     },
                     {
                       label: 'Product tags',
                       value: 'tags',
-                      renderChildren: () => selectApply == 'tags' && <ProductTags tags={tags} />,
+                      renderChildren: () => selectApply[0] == 'tags' && <ProductTags tags={tags} />,
                     },
                   ]}
                   selected={selectApply}
