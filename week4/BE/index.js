@@ -3,7 +3,7 @@ const parser = require("koa-bodyparser");
 const cors = require("@koa/cors");
 const router = require("./src/router/router");
 const App = new Koa();
-const port = 8888;
+const port = 8686;
 
 App.use(parser()).use(cors()).use(router.routes());
 

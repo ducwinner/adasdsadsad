@@ -7,12 +7,14 @@ export const customProductAll = (response) => {
     const amountVariant = e.node.variants.edges.length;
     const variant1 = e.node.variants.edges[0].node;
     const variant2 = e.node.variants.edges[amountVariant - 1].node;
+    const currency = e.node.priceRange.minVariantPrice.currencyCode
     if (amountVariant == 1) {
       return {
         id,
         title,
         images,
         variants: [variant1],
+        currency
       };
     } else if (variant1.price !== variant2.price) {
       return {
@@ -20,6 +22,7 @@ export const customProductAll = (response) => {
         title,
         images,
         variants: [variant1, variant2],
+        currency
       };
     } else {
       return {
@@ -27,6 +30,7 @@ export const customProductAll = (response) => {
         title,
         images,
         variants: [variant1],
+        currency
       };
     }
   });
@@ -67,23 +71,27 @@ export const customProductsByTags = (response) => {
     const amountVariant = e.node.variants.edges.length;
     const variant1 = e.node.variants.edges[0].node;
     const variant2 = e.node.variants.edges[amountVariant - 1].node;
+    const currency = e.node.priceRange.minVariantPrice.currencyCode
     if (amountVariant == 1) {
       return {
         id,
         title,
         variants: [variant1],
+        currency
       };
     } else if (variant1.price !== variant2.price) {
       return {
         id,
         title,
         variants: [variant1, variant2],
+        currency
       };
     } else {
       return {
         id,
         title,
         variants: [variant1],
+        currency
       };
     }
   });

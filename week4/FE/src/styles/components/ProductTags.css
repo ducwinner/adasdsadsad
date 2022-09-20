@@ -1,0 +1,31 @@
+.tags-add {
+    width: 100%;
+    margin: 15px 0 15px 0;
+    padding: 5px;
+    background-color: #f9fafb;
+}
+
+.tags-add > div {
+    display: flex !important;
+}
+
+.tags-add >div .Polaris-Labelled__LabelWrapper {
+    margin: 0 10px;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9fafb;
+}
+
+.tags-add .Polaris-Connected {
+    flex: 1 !important;
+}
+
+.tags-add input {
+    outline: none;
+}
+
+.tags-add .Polaris-TextField__Backdrop {
+    border: none;
+    background-color: #f9fafb;
+}

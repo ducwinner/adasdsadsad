@@ -50,7 +50,12 @@ async function main(tags) {
                           }
                         }
                       }
+                    priceRange {
+                      minVariantPrice {
+                        currencyCode
+                      }
                     }
+                  }
               }
           }
       }

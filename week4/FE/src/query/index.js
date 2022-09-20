@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const queryCollections = gql`
   {
     shop {
-      collections(first: 7) {
+      collections(first: 6) {
         edges {
           node {
             id
@@ -29,6 +29,11 @@ export const queryCollections = gql`
                         title
                         price
                       }
+                    }
+                  }
+                  priceRange {
+                    minVariantPrice {
+                      currencyCode
                     }
                   }
                 }
@@ -61,6 +66,11 @@ export const queryProductAll = gql`
                 title
                 price
               }
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              currencyCode
             }
           }
         }

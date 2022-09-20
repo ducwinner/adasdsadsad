@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
 import React from 'react';
-import { Tag, Listbox, Combobox, Icon, TextContainer, Stack } from '@shopify/polaris';
-import { SearchMinor } from '@shopify/polaris-icons';
+import { Tag, Listbox, Combobox, Icon, TextContainer, Stack, TextField } from '@shopify/polaris';
+import { SearchMinor, CirclePlusMajor } from '@shopify/polaris-icons';
 import '../../styles/components/SpecificProducts.css';
+import '../../styles/components/ProductTags.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTags } from '../../redux/productTagSlice';
 
@@ -10,10 +11,13 @@ function ProductTags({ tags }) {
   //Hook
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState(tags);
+  const [value, setValue] = useState('Jaded Pixel');
 
   // Redux
   const selectedOptions = useSelector((state) => state.tags.data);
   const dispatch = useDispatch();
+
+  const handleChange = useCallback((newValue) => setValue(newValue), []);
 
   const updateText = useCallback(
     (value) => {
@@ -78,7 +82,6 @@ function ProductTags({ tags }) {
   return (
     <div className="specific-products">
       <Combobox
-        allowMultiple
         activator={
           <Combobox.TextField
             prefix={<Icon source={SearchMinor} />}
@@ -89,6 +92,14 @@ function ProductTags({ tags }) {
           />
         }
       >
+        <div className="tags-add">
+          <TextField
+            label={<Icon source={CirclePlusMajor} color="base" />}
+            value={value}
+            onChange={handleChange}
+            autoComplete="off"
+          />
+        </div>
         {optionsMarkup ? (
           <Listbox autoSelection="NONE" onSelect={updateSelection}>
             {optionsMarkup}

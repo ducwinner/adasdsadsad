@@ -48,9 +48,9 @@
 
 .header-footer {
   position: relative;
-  width: 100%;
+  width: 85%;
   height: 50px;
-  margin: 50px 0 10px 0;
+  margin: 40px 0 10px 30px;
 }
 
 .button-save {
@@ -64,13 +64,18 @@
   outline: none;
   font-size: 16px;
   font-weight: 500;
-  padding: 8px 20px;
+  padding: 8px 25px;
   border-radius: 8px;
   cursor: pointer;
 }
 
 .button-save:hover {
   background-color: #035a44;
+}
+
+.blur {
+  opacity: 0.6;
+  cursor: no-drop;
 }
 
 .Polaris-DataTable__Table thead tr {

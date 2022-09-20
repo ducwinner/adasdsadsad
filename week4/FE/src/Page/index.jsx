@@ -31,16 +31,17 @@ export default function HomePage() {
   const [collectionAll, setCollectionAll] = useState([]);
   const [tags, setTags] = useState([]);
   const [name, setName] = useState('');
-  const [nameErr, setNameErr] = useState(false);
+  const [nameErr, setNameErr] = useState(0);
   const [priority, setPriority] = useState('');
   const [priorityErr, setPriorityErr] = useState(false);
   const [rulePriceValue, setRulePriceValue] = useState('');
   const [priceErr, setPriceErr] = useState(false);
-  const [selectStatus, setSelectStatus] = useState('');
+  const [selectStatus, setSelectStatus] = useState("Enable");
   const [selectApply, setSelectApply] = useState('');
   const [selectCustomPrice, setSelectCustomPrice] = useState('');
   const [isOkSave, setIsOKSave] = useState(false);
   const [rows, setRows] = useState([]);
+  const [inputDiscount, setDiscount] = useState({onePrice: '', fixed: '', percent: ''})
   //redux
   const productsSpecific = useSelector((state) => state.specificProduct.data);
   const tagsQuery = useSelector((state) => state.tags.data);
@@ -70,30 +71,39 @@ export default function HomePage() {
     },
   });
 
+
   // call product by tags
   const getProductsByTags = useCallback(async () => {
     try {
-      const data = await axios.post('http://localhost:8888/api/getProductsByTags', { tags: tagsQuery });
+      const data = await axios.post('http://localhost:8686/api/getProductsByTags', { tags: tagsQuery });
       const result = customProductsByTags(data);
       return result;
     } catch (error) {
       console.log(error);
     }
-  }, [tagsQuery]);
+  }, [tagsQuery])
+
 
   // Validate all require
   useEffect(() => {
-    if (name && priority && !priorityErr && rulePriceValue && !priceErr && selectApply && selectCustomPrice) {
+    if (name && priority && !priorityErr && rulePriceValue && !priceErr && selectApply && selectCustomPrice && nameErr == 0 && selectStatus == "Enable") {
+
       setIsOKSave(true);
     } else {
       setIsOKSave(false);
     }
-  }, [name, priority, priorityErr, rulePriceValue, priceErr, selectApply, selectCustomPrice]);
+  },);
 
   const handleNameChange = useCallback((value) => {
-    !value ? setNameErr(true) : setNameErr(false);
-
-    setName(value);
+    setName(value)
+    const checkSpace = /\s/
+    if(!value) {
+      setNameErr(1)
+    } else if(checkSpace.test(value)) {
+      setNameErr(2)
+    } else {
+      setNameErr(0)
+    }
   }, []);
 
   const handleSelectChange = useCallback((value) => setSelectStatus(value), []);
@@ -110,8 +120,11 @@ export default function HomePage() {
     } else {
       setPriceErr(false);
     }
+
+    setRulePriceValue(inputDiscount[value]);
+    console.log()
     setSelectCustomPrice(value);
-  }, []);
+  }, [rulePriceValue,inputDiscount]);
 
   const handlePriorityChange = useCallback((value) => {
     // check integer
@@ -127,6 +140,31 @@ export default function HomePage() {
 
   const handlevRulePriceChange = useCallback(
     (value) => {
+      console.log(value)
+    console.log('1',inputDiscount)
+      //Save input Rule discount
+      switch(selectCustomPrice[0]) {
+        case 'onePrice':
+          setDiscount(prev => ({
+            ...prev,
+            onePrice: value
+          }))
+          break;
+        case 'fixed':
+          setDiscount(prev => ({
+            ...prev,
+            fixed: value
+          }))
+          break;
+        default:
+          setDiscount(prev => ({
+            ...prev,
+            percent: value
+          }))
+      }
+
+    console.log('2',inputDiscount)
+      // validate input 
       if (value < 0) {
         setPriceErr(false);
         value = Math.abs(value);
@@ -140,7 +178,7 @@ export default function HomePage() {
 
       setRulePriceValue(value);
     },
-    [selectCustomPrice]
+    [selectCustomPrice,inputDiscount]
   );
 
   // Call products with Rule
@@ -148,32 +186,29 @@ export default function HomePage() {
     let productApply = [];
     switch (selectApply[0]) {
       case 'specific':
-        console.log('specific');
         productApply = productsSpecific;
         break;
       case 'tags':
         productApply = await getProductsByTags();
-        console.log('tags');
 
         break;
       case 'collection':
         const colectionsMatch = collectionAll.filter((e) => collectionsQuery.includes(e.id));
-        console.log('collection');
 
         productApply = colectionsMatch.map((e) => e.products).flat();
         break;
       default:
-        console.log('all');
 
         productApply = productAll;
     }
     return productApply;
-  }, [selectApply, productsSpecific, collectionsQuery, productAll]);
+  }, [selectApply, productsSpecific, collectionsQuery, productAll, tagsQuery]);
 
   const handlePriceByRule = useCallback(
     (data) => {
       const productsAfterApply = data.map((e) => {
         const titleProduct = e.title;
+        const currency = e.currency
         // change all prices with one price
         if (selectCustomPrice == 'onePrice') {
           const variants = e.variants.map((e) => {
@@ -196,6 +231,7 @@ export default function HomePage() {
           return {
             title: titleProduct,
             variants,
+            currency
           };
 
           // change prices with a fixed amount
@@ -220,6 +256,7 @@ export default function HomePage() {
           return {
             title: titleProduct,
             variants,
+            currency
           };
 
           // change price by percentage %
@@ -237,6 +274,7 @@ export default function HomePage() {
           return {
             title: titleProduct,
             variants,
+            currency
           };
         }
       });
@@ -246,7 +284,9 @@ export default function HomePage() {
     [rulePriceValue, selectCustomPrice]
   );
 
-  const handleAddPricingRule = useCallback(async () => {
+  const handleAddPricingRule = async () => {
+    if(!isOkSave) return
+
     const data = await getProductsByRule();
     const dataAfterApplyRule = handlePriceByRule(data);
 
@@ -261,21 +301,16 @@ export default function HomePage() {
         productName = `${e.title} (${e.variants[0].title})`;
       }
       if (index < 10) {
-        rows.push([productName, `${e.variants[0].currentPrice} $`, `${e.variants[0].lastPrice} $`]);
+        rows.push([productName, `${e.variants[0].currentPrice} ${e.currency}`, `${e.variants[0].lastPrice} ${e.currency}`]);
       }
     });
     setRows(rows);
-  });
+  };
 
   return (
     <Page fullWidth>
       <Layout>
         <Layout.Section>
-          <div className="header-footer">
-            <button className={isOkSave ? 'button-save' : 'hide'} onClick={handleAddPricingRule}>
-              Save
-            </button>
-          </div>
         </Layout.Section>
         <Layout.Section>
           <Layout>
@@ -290,7 +325,7 @@ export default function HomePage() {
                       label="Name"
                       type="text"
                       autoComplete="off"
-                      helpText={nameErr && <TextStyle variation="warning">Enter this field</TextStyle>}
+                      helpText={nameErr !== 0 && <TextStyle variation="negative">{nameErr == 1 ? 'Enter this field' : 'Name has not space'}</TextStyle>}
                     />
                     <TextField
                       value={priority}
@@ -301,7 +336,7 @@ export default function HomePage() {
                       autoComplete="off"
                       helpText={
                         priorityErr && (
-                          <TextStyle variation="warning">
+                          <TextStyle variation="negative">
                             Please enter integer from 0 to 99, 0 is the hightest priority
                           </TextStyle>
                         )
@@ -366,13 +401,12 @@ export default function HomePage() {
                   label="Amount"
                   type="number"
                   autoComplete="off"
-                  prefix={!(selectCustomPrice == 'percent') && <div style={{ textDecoration: 'underline' }}>đ</div>}
                   helpText={
                     priceErr && (
-                      <TextStyle variation="warning">
+                      <TextStyle variation="negative">
                         {selectCustomPrice == 'percent' && rulePriceValue > 100
                           ? 'Please enter number from 0 to 99'
-                          : ''}
+                          : null}
                       </TextStyle>
                     )
                   }
@@ -393,7 +427,7 @@ export default function HomePage() {
         </Layout.Section>
         <Layout.Section>
           <div className="header-footer">
-            <button className={isOkSave ? 'button-save' : 'hide'} onClick={handleAddPricingRule}>
+            <button className={isOkSave ? 'button-save' : 'button-save blur'} onClick={handleAddPricingRule}>
               Save
             </button>
           </div>
