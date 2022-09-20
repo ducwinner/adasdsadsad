@@ -111,7 +111,7 @@ export default function HomePage() {
       setPriceErr(false);
     }
     setSelectCustomPrice(value);
-  }, []);
+  }, [rulePriceValue]);
 
   const handlePriorityChange = useCallback((value) => {
     // check integer
@@ -148,23 +148,18 @@ export default function HomePage() {
     let productApply = [];
     switch (selectApply[0]) {
       case 'specific':
-        console.log('specific');
         productApply = productsSpecific;
         break;
       case 'tags':
         productApply = await getProductsByTags();
-        console.log('tags');
 
         break;
       case 'collection':
         const colectionsMatch = collectionAll.filter((e) => collectionsQuery.includes(e.id));
-        console.log('collection');
 
         productApply = colectionsMatch.map((e) => e.products).flat();
         break;
       default:
-        console.log('all');
-
         productApply = productAll;
     }
     return productApply;
